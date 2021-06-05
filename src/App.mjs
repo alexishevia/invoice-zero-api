@@ -1,5 +1,21 @@
 import { v1 as uuidv1 } from 'uuid';
-import Validation from './Validation.mjs';
+import Validation, { ValidationError } from './Validation.mjs';
+
+/* --- ERRORS --- */
+
+export class NotFoundError extends Error {
+  name = 'NotFoundError'
+  constructor(message) {
+    super(message)
+  }
+}
+
+export class InvalidRequestError extends Error {
+  name = 'InvalidRequestError'
+  constructor(message) {
+    super(message)
+  }
+}
 
 export default function App() {
 
@@ -10,21 +26,25 @@ export default function App() {
   /* --- ACTIONS --- */
 
   function createAccount(accountData) {
-    new Validation(accountData, "name").required().string().notEmpty();
-    new Validation(accountData, "initialBalance")
-      .required()
-      .number()
-      .biggerOrEqualThan(0);
+    try {
+      new Validation(accountData, "name").required().string().notEmpty();
+      new Validation(accountData, "initialBalance")
+        .required()
+        .number()
+        .biggerOrEqualThan(0);
+    } catch(err) {
+      if (err instanceof ValidationError) {
+        throw new InvalidRequestError(err.message);
+      }
+      throw err;
+    }
     const account = {
       id: uuidv1(),
       name: accountData.name,
       initialBalance: accountData.initialBalance,
       modifiedAt: new Date().toISOString(),
     };
-    process({
-      type: 'accounts/create',
-      payload: account,
-    });
+    process({ type: 'accounts/create', payload: account });
     return account;
   }
 
@@ -47,6 +67,14 @@ export default function App() {
     return Object.values(accounts);
   }
 
+  function getAccountByID(id) {
+    const account = accounts[id];
+    if (!account) {
+      throw new NotFoundError(`No account found with id: ${id}`);
+    }
+    return account;
+  }
+
   /* --- EXPORT --- */
 
 
@@ -56,6 +84,7 @@ export default function App() {
     },
     selectors: {
       listAccounts,
+      getAccountByID,
     },
   };
 

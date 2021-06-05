@@ -1,6 +1,5 @@
 import express from 'express';
-import App from './App.mjs';
-import { ValidationError } from './Validation.mjs';
+import App, { NotFoundError, InvalidRequestError } from './App.mjs';
 
 export default function RestServer() {
   const app = new App();
@@ -25,6 +24,15 @@ export default function RestServer() {
       }
     });
 
+  server.route('/accounts/:id')
+    .get((req, res, next) => {
+      try {
+        res.status(200).json(app.selectors.getAccountByID(req.params.id));
+      } catch(err) {
+        next(err);
+      }
+    });
+
   server.use(function (_, res) {
     if (!res.headersSent) {
       res.status(404).json({ error: 'route not found' });
@@ -32,8 +40,12 @@ export default function RestServer() {
   });
 
   server.use(function (err, _0, res, _1) {
-    if (err instanceof ValidationError) {
+    if (err instanceof InvalidRequestError) {
       res.status(400).json({ error: err.message });
+      return;
+    }
+    if (err instanceof NotFoundError) {
+      res.status(404).json({ error: err.message });
       return;
     }
     console.error(err.stack)

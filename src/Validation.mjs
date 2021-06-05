@@ -2,7 +2,6 @@ import { isValidDayStr, isValidDateStr, isValidUTCDateStr } from "./date.mjs";
 
 export class ValidationError extends Error {
   name = 'ValidationError'
-
   constructor(message) {
     super(message)
   }

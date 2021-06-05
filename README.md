@@ -39,7 +39,18 @@ curl -X POST 'http://localhost:8080/accounts' -d '{"name": "Saving", "initialBal
 curl -X GET 'http://localhost:8080/accounts'
 ```
 
-## Architecture
+#### Get Account by ID
+```
+curl -X GET 'http://localhost:8080/accounts/c47555d0-c641-11eb-a092-f79bd9a98d6e'
+```
+
+## Running Tests
+- Run all tests: `npm test`
+- Run tests in debug mode: `npm run test:debug`
+- Run a single test: `npx mocha /path/to/test.mjs`
+- Run a single test in debug mode: `npx mocha debug /path/to/test.mjs`
+
+## References
 This implementation is heavily inspired by this blog post:
 [Doing Without Databases in the 21st Century](https://codeburst.io/doing-without-databases-in-the-21st-century-6e25cf495373)
 
