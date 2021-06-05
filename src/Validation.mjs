@@ -1,5 +1,13 @@
 import { isValidDayStr, isValidDateStr, isValidUTCDateStr } from "./date.mjs";
 
+export class ValidationError extends Error {
+  name = 'ValidationError'
+
+  constructor(message) {
+    super(message)
+  }
+}
+
 function isDefined({ obj, field }) {
   return obj && Object.hasOwnProperty.call(obj, field);
 }
@@ -75,7 +83,7 @@ export default class Validation {
       exists: isDefined({ obj, field }),
       value: obj[field],
       failed: (msg) => {
-        throw new Error(`${field} ${msg}. Received: ${obj[field]}`);
+        throw new ValidationError(`${field} ${msg}. Received: ${obj[field]}`);
       },
     };
   }

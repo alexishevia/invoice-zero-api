@@ -3,7 +3,8 @@ Invoice Zero is a personal finance system meant to be simple, and easy to use.
 
 ## Getting Started
 1. Install [nodeJS](https://nodejs.org/) (v14.17.0 preferred)
-2. Run `npm start` to start the server on port `8080`
+2. Run `npm install` to install all dependencies
+3. Run `npm start` to start the server on `http://localhost:8080`
 
 ## API
 

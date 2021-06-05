@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import RestServer from '../src/restServer.mjs';
+import RestServer from '../src/RestServer.mjs';
 
 const port = 8080;
 

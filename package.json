@@ -3,13 +3,18 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www.mjs"
+    "start": "nodemon ./bin/www.mjs",
+    "test": "mocha tests/**/*.test.mjs",
+    "test:debug": "mocha debug tests/**/*.test.mjs"
   },
   "dependencies": {
     "express": "^4.17.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "nodemon": "^2.0.7"
+    "chai": "^4.3.4",
+    "mocha": "^8.4.0",
+    "nodemon": "^2.0.7",
+    "supertest": "^6.1.3"
   }
 }
