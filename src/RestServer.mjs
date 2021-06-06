@@ -1,8 +1,8 @@
 import express from 'express';
 import App, { NotFoundError, InvalidRequestError } from './App.mjs';
 
-export default function RestServer() {
-  const app = new App();
+export default async function RestServer({ persistence = {} } = {}) {
+  const app = await App({ persistence });
   const server = express();
 
   server.use(express.json()) // parse serverlication/json
@@ -32,7 +32,7 @@ export default function RestServer() {
         next(err);
       }
     })
-    .put((req, res, next) => {
+    .patch((req, res, next) => {
       try {
         res.status(200).json(app.actions.updateAccount(req.params.id, req.body));
       } catch (err) {

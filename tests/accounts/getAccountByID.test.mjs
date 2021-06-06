@@ -61,7 +61,7 @@ describe('getAccountByID', function() {
       let body;
 
       beforeEach(async function() {
-        const server = new RestServer();
+        const server = await RestServer();
 
         if(test.setup) {
           await test.setup(server);

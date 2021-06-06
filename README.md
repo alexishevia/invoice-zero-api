@@ -6,6 +6,20 @@ Invoice Zero is a personal finance system meant to be simple, and easy to use.
 2. Run `npm install` to install all dependencies
 3. Run `npm start` to start the server on `http://localhost:8080`
 
+## Persistence
+By default, the app runs using "in memory" persistence. This means all data will be lost once the
+server is shut down.
+
+To enable file-based persistence:
+1. Create a new file to hold api data, eg: `touch /tmp/invoice-zero-api.mdjson`
+2. Create a `.env` file in the project root with the following fields:
+```
+PORT=8080
+PERSISTENCE_TYPE="file"
+PERSISTENCE_FILEPATH="/tmp/invoice-zero-api.mdjson"
+```
+
+
 ## API
 
 ### Accounts
@@ -31,7 +45,9 @@ Accounts have the following fields:
 
 #### Create Account
 ```
-curl -X POST 'http://localhost:8080/accounts' -d '{"name": "Saving", "initialBalance": 300}'
+curl -X POST 'http://localhost:8080/accounts' \
+  --header 'Content-Type: application/json' \
+  -d '{"name": "Saving", "initialBalance": 300}'
 ```
 
 #### List Accounts
@@ -42,6 +58,13 @@ curl -X GET 'http://localhost:8080/accounts'
 #### Get Account by ID
 ```
 curl -X GET 'http://localhost:8080/accounts/c47555d0-c641-11eb-a092-f79bd9a98d6e'
+```
+
+#### Update Account
+```
+curl -X PATCH 'http://localhost:8080/accounts/c47555d0-c641-11eb-a092-f79bd9a98d6e' \
+  --header 'Content-Type: application/json' \
+  -d '{ "name": "New Name" }'
 ```
 
 ## Running Tests

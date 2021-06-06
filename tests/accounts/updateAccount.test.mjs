@@ -41,9 +41,8 @@ describe('updateAccount', function() {
             'returns updated account initialBalance': function(body) {
               expect(body.initialBalance).to.equal(10.75);
             },
-            'returns updated modifiedAt': function(body) {
+            'returns modifiedAt': function(body) {
               expect(body.modifiedAt).to.match(isoDateRegex);
-              expect(new Date(body.modifiedAt)).to.be.above(new Date(original.modifiedAt));
             },
           },
         },
@@ -77,9 +76,8 @@ describe('updateAccount', function() {
             'returns account initialBalance': function(body) {
               expect(body.initialBalance).to.equal(original.initialBalance);
             },
-            'returns updated modifiedAt': function(body) {
+            'returns modifiedAt': function(body) {
               expect(body.modifiedAt).to.match(isoDateRegex);
-              expect(new Date(body.modifiedAt)).to.be.above(new Date(original.modifiedAt));
             },
           },
         },
@@ -115,10 +113,6 @@ describe('updateAccount', function() {
             'change is not persisted': function(body) {
               expect(body.id).to.equal(original.id);
             },
-            'modified at is updated': function(body) {
-              expect(body.modifiedAt).to.match(isoDateRegex);
-              expect(new Date(body.modifiedAt)).to.be.above(new Date(original.modifiedAt));
-            },
           },
         },
       }
@@ -136,7 +130,7 @@ describe('updateAccount', function() {
           body: {
             'ignores user defined modifiedAt; generates new modifiedAt': function(body) {
               expect(body.modifiedAt).to.match(isoDateRegex);
-              expect(new Date(body.modifiedAt)).to.be.above(new Date(original.modifiedAt));
+              expect(body.modifiedAt).to.not.equal('2020-01-01T00:00:00.000Z');
             }
           },
         },
@@ -145,10 +139,19 @@ describe('updateAccount', function() {
           body: {
             'change is persisted': function(body) {
               expect(body.modifiedAt).to.match(isoDateRegex);
-              expect(new Date(body.modifiedAt)).to.be.above(new Date(original.modifiedAt));
+              expect(body.modifiedAt).to.not.equal('2020-01-01T00:00:00.000Z');
             }
           },
         },
+      }
+    },
+    {
+      name: 'update non-existing account',
+      id: () => 'foo',
+      requestBody: { initialBalance: 10.75 },
+      expect: {
+        onUpdate: { statusCode: 404, body: {} },
+        onRefetch: { statusCode: 404, body: {} },
       }
     },
   ].forEach(function (test) {
@@ -159,7 +162,7 @@ describe('updateAccount', function() {
       let body;
 
       beforeEach(async function() {
-        server = new RestServer();
+        server = await RestServer();
 
         if(test.setup) {
           await test.setup(server);
@@ -167,7 +170,7 @@ describe('updateAccount', function() {
 
         // run update
         const res = await request(server)
-          .put(`/accounts/${test.id()}`)
+          .patch(`/accounts/${test.id()}`)
           .set('Accept', 'application/json')
           .send(test.requestBody);
 

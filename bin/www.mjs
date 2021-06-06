@@ -2,9 +2,17 @@
 
 import RestServer from '../src/RestServer.mjs';
 
-const port = 8080;
+const { PORT, PERSISTENCE_TYPE, PERSISTENCE_FILEPATH } = process.env;
 
-const server = new RestServer();
-server.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
-});
+const port = PORT || 8080;
+const persistence = {
+  type: PERSISTENCE_TYPE || 'memory',
+  filepath: PERSISTENCE_FILEPATH || '',
+};
+
+(async function() {
+  const server = await RestServer({ persistence });
+  server.listen(port, () => {
+    console.log(`Example app listening at http://localhost:${port}`)
+  });
+})();

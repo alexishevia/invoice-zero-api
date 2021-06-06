@@ -3,12 +3,15 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www.mjs",
+    "start": "nodemon --require dotenv/config ./bin/www.mjs",
+    "debug": "nodemon --inspect-brk --require dotenv/config ./bin/www.mjs",
     "test": "mocha tests/**/*.test.mjs",
     "test:debug": "mocha debug tests/**/*.test.mjs"
   },
   "dependencies": {
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "split2": "^3.2.2",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

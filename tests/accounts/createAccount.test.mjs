@@ -133,7 +133,7 @@ describe('createAccount', function() {
       let body;
 
       beforeEach(async function() {
-        server = new RestServer();
+        server = await RestServer();
         const res = await request(server)
           .post('/accounts')
           .set('Accept', 'application/json')

@@ -38,7 +38,7 @@ describe('listAccounts', function() {
           },
           'returns account id': function(body) {
             expect(body[0].id).to.be.a('string');
-            expect(body[0].id).not.to.be.empty;
+            expect(body[0].id).to.not.be.empty;
           },
           'returns account name': function(body) {
             expect(body[0].name).to.equal('Trips');
@@ -76,7 +76,7 @@ describe('listAccounts', function() {
       let body;
 
       beforeEach(async function() {
-        const server = new RestServer();
+        const server = await RestServer();
 
         if(test.setup) {
           await test.setup(server);
