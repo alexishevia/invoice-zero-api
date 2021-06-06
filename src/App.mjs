@@ -48,13 +48,30 @@ export default function App() {
     return account;
   }
 
+  function updateAccount(id, newData) {
+    const account = {
+      ...accounts[id],
+      modifiedAt: new Date().toISOString()
+    };
+    ['name', 'initialBalance'].forEach((prop) => {
+      if (newData.hasOwnProperty(prop)) {
+        account[prop] = newData[prop];
+      }
+    });
+    process({ type: 'accounts/update', payload: account });
+    return account;
+  }
+
   /* --- REDUCER --- */
 
   function process(action) {
     const { type, payload } = action;
     switch(type) {
       case 'accounts/create':
-        accounts[payload.id] = payload
+        accounts[payload.id] = payload;
+        break;
+      case 'accounts/update':
+        accounts[payload.id] = payload;
         break;
       default:
         throw new Error(`unknown action.type: ${type}`);
@@ -81,6 +98,7 @@ export default function App() {
   return {
     actions: {
       createAccount,
+      updateAccount,
     },
     selectors: {
       listAccounts,

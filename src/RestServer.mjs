@@ -31,6 +31,13 @@ export default function RestServer() {
       } catch(err) {
         next(err);
       }
+    })
+    .put((req, res, next) => {
+      try {
+        res.status(200).json(app.actions.updateAccount(req.params.id, req.body));
+      } catch (err) {
+        next(err);
+      }
     });
 
   server.use(function (_, res) {
