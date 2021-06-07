@@ -1,6 +1,19 @@
 # Invoice Zero API
 Invoice Zero is a personal finance system meant to be simple, and easy to use.
 
+1. [Getting Started](#getting-started)
+2. [Persistence](#persistence)
+3. [API](#api)
+	1. [Accounts](#accounts)
+		1. [Create Account](#create-account)
+		2. [List Accounts](#list-accounts)
+		3. [Get Account by ID](#get-account-by-id)
+		4. [Update Account](#update-account)
+		5. [Delete Account](#delete-account)
+2. [Running Tests](#running-tests)
+3. [Architecture](#architecture)
+4. [References](#references)
+
 ## Getting Started
 1. Install [nodeJS](https://nodejs.org/) (v14.17.0 preferred)
 2. Run `npm install` to install all dependencies
