@@ -37,7 +37,6 @@ PERSISTENCE_TYPE="file"
 PERSISTENCE_FILEPATH="/tmp/invoice-zero-api.mdjson"
 ```
 
-
 ## API
 
 ### Accounts

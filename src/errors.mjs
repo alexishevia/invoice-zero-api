@@ -25,4 +25,3 @@ export class FatalError extends Error {
     super(message)
   }
 }
-

@@ -1,6 +1,11 @@
 import fs from 'fs';
 import split2 from 'split2';
 
+/*
+ * FilePersistence
+ * appends actions to an [ndjson](http://ndjson.org/) file.
+ */
+
 export default function FilePersistence({ filepath }) {
   return {
     appendAction: (action) => {

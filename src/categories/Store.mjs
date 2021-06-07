@@ -1,6 +1,6 @@
 
 export default function CategoriesStore() {
-  const name = 'categories';
+  const mountPoint = 'categories';
   const state = {};
 
   function dispatch(state, action) {
@@ -17,7 +17,7 @@ export default function CategoriesStore() {
   }
 
   return {
-    name,
+    mountPoint,
     state,
     dispatch,
   };

@@ -1,6 +1,6 @@
 
 export default function AccountsStore() {
-  const name = 'accounts';
+  const mountPoint = 'accounts';
   const state = {};
 
   function dispatch(state, action) {
@@ -17,7 +17,7 @@ export default function AccountsStore() {
   }
 
   return {
-    name,
+    mountPoint,
     state,
     dispatch,
   };

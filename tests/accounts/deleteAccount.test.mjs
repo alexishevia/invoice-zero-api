@@ -48,7 +48,7 @@ describe('deleteAccount', function() {
             },
           },
         },
-        onRefetch: {
+        onGetByID: {
           statusCode: 200,
           body: {
             'change is persisted': function(body) {
@@ -64,7 +64,7 @@ describe('deleteAccount', function() {
       requestBody: { initialBalance: 10.75 },
       expect: {
         onDelete: { statusCode: 404, body: {} },
-        onRefetch: { statusCode: 404, body: {} },
+        onGetByID: { statusCode: 404, body: {} },
       }
     },
   ].forEach(function (test) {
@@ -112,11 +112,11 @@ describe('deleteAccount', function() {
           body = res.body;
         });
 
-        it(`returns status code ${test.expect.onRefetch.statusCode}`, function() {
-          expect(statusCode).to.equal(test.expect.onRefetch.statusCode);
+        it(`returns status code ${test.expect.onGetByID.statusCode}`, function() {
+          expect(statusCode).to.equal(test.expect.onGetByID.statusCode);
         });
 
-        Object.entries(test.expect.onRefetch.body).forEach(function([name, func]) {
+        Object.entries(test.expect.onGetByID.body).forEach(function([name, func]) {
           it(name, function() {
             func(body);
           });

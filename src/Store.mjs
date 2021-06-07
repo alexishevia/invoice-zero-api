@@ -5,10 +5,10 @@ export default async function Store({ subStores, persistence }) {
   let skipPersist = false;
 
   subStores.forEach((store) => {
-    if (state[store.name]) {
-      throw new Error(`duplicate store name: ${store.name}`);
+    if (state[store.mountPoint]) {
+      throw new Error(`duplicate store mountPoint: ${store.mountPoint}`);
     }
-    state[store.name] = store.state;
+    state[store.mountPoint] = store.state;
   });
 
   function dispatch(action) {

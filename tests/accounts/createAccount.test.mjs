@@ -7,7 +7,7 @@ const isoDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/; // '2021-0
 describe('createAccount', function() {
   [
     {
-      name: 'happy path',
+      name: 'successful create',
       requestBody: { name: 'Groceries', initialBalance: 500.0 },
       expect: {
         onCreate: {
