@@ -10,9 +10,15 @@ Invoice Zero is a personal finance system meant to be simple, and easy to use.
 		3. [Get Account by ID](#get-account-by-id)
 		4. [Update Account](#update-account)
 		5. [Delete Account](#delete-account)
-2. [Running Tests](#running-tests)
-3. [Architecture](#architecture)
-4. [References](#references)
+	2. [Categories](#categories)
+		1. [Create Category](#create-category)
+		2. [List Categories](#list-categories)
+		3. [Get Category by ID](#get-category-by-id)
+		4. [Update Category](#update-category)
+		5. [Delete Category](#delete-category)
+3. [Running Tests](#running-tests)
+4. [Architecture](#architecture)
+5. [References](#references)
 
 ## Getting Started
 1. Install [nodeJS](https://nodejs.org/) (v14.17.0 preferred)
@@ -65,7 +71,7 @@ Accounts have the following fields:
 ```
 curl -X POST 'http://localhost:8080/accounts' \
   --header 'Content-Type: application/json' \
-  -d '{"name": "Saving", "initialBalance": 300}'
+  -d '{"name": "Savings", "initialBalance": 300}'
 ```
 
 #### List Accounts
@@ -88,6 +94,58 @@ curl -X PATCH 'http://localhost:8080/accounts/c47555d0-c641-11eb-a092-f79bd9a98d
 #### Delete Account
 ```
 curl -X DELETE 'http://localhost:8080/accounts/c47555d0-c641-11eb-a092-f79bd9a98d6e'
+```
+
+### Categories
+
+Categories allow grouping transactions, for reporting purposes.
+
+Categories have the following fields:
+
+```
+| field name | type          | description                           | example                    |
+| ---        | ---           | ---                                   | ---                        |
+| id         | string        | Unique identifier for the category.   | "f3528a13"                 |
+|            | non empty     |                                       |                            |
+|            |               |                                       |                            |
+| name       | string        | Human-friendly name for the category. | "Groceries"                |
+|            | non empty     |                                       |                            |
+|            |               |                                       |                            |
+| modifiedAt | string        | Last date the category was modified.  | "2019-10-12T12:25:35.059Z" |
+|            | full ISO 8601 | (create, update, and delete count     |                            |
+|            | date in UTC   | for "modifiedAt")                     |                            |
+|            |               |                                       |                            |
+| deleted    | boolean       | true if the category has been         | false                      |
+|            |               | deleted. false otherwise.             |                            |
+```
+
+#### Create Category
+```
+curl -X POST 'http://localhost:8080/categories' \
+  --header 'Content-Type: application/json' \
+  -d '{"name": "Groceries" }'
+```
+
+#### List Categories
+```
+curl -X GET 'http://localhost:8080/categories'
+```
+
+#### Get Category by ID
+```
+curl -X GET 'http://localhost:8080/categories/c47555d0-c641-11eb-a092-f79bd9a98d6e'
+```
+
+#### Update Category
+```
+curl -X PATCH 'http://localhost:8080/categories/c47555d0-c641-11eb-a092-f79bd9a98d6e' \
+  --header 'Content-Type: application/json' \
+  -d '{ "name": "New Name" }'
+```
+
+#### Delete Category
+```
+curl -X DELETE 'http://localhost:8080/categories/c47555d0-c641-11eb-a092-f79bd9a98d6e'
 ```
 
 ## Running Tests

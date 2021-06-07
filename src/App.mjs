@@ -1,8 +1,8 @@
 import InMemoryPersistence from './persistence/Memory.mjs';
 import FilePersistence from './persistence/File.mjs';
 import Store from './Store.mjs';
-import * as importedSelectors from './selectors.mjs';
-import * as importedActions from './actions.mjs';
+import * as importedSelectors from './selectors/selectors.mjs';
+import * as importedActions from './actions/actions.mjs';
 
 function getPersistenceFromOptions({ type, filepath }) {
   switch(type) {

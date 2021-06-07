@@ -1,7 +1,7 @@
 import { v1 as uuidv1 } from 'uuid';
-import Validation, { ValidationError } from './Validation.mjs';
-import { getAccountByID } from './selectors.mjs';
-import { InvalidRequestError, ConflictError } from './errors.mjs';
+import Validation, { ValidationError } from '../Validation.mjs';
+import { getAccountByID } from '../selectors/accounts.mjs';
+import { InvalidRequestError, ConflictError } from '../errors.mjs';
 
 /* --- ACTIONS --- */
 
@@ -67,6 +67,6 @@ export function deleteAccount(store, id) {
     deleted: true,
     modifiedAt: new Date().toISOString(),
   };
-  store.dispatch({ type: 'accounts/update', payload: updated });
+  store.dispatch({ type: 'accounts/delete', payload: updated });
   return updated;
 }

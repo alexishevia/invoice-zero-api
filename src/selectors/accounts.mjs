@@ -1,6 +1,4 @@
-import {
-  NotFoundError
-} from './errors.mjs';
+import { NotFoundError } from '../errors.mjs';
 
 export function listAccounts(state) {
   return Object.values(state.accounts);

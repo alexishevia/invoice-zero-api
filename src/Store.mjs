@@ -3,6 +3,7 @@ import { FatalError } from './errors.mjs';
 export default async function Store({ persistence }) {
   const state = {
     accounts: {},
+    categories: {},
   };
 
   let skipPersist = false;
@@ -12,10 +13,14 @@ export default async function Store({ persistence }) {
     try {
       switch(type) {
         case 'accounts/create':
+        case 'accounts/update':
+        case 'accounts/delete':
           state.accounts[payload.id] = payload;
           break;
-        case 'accounts/update':
-          state.accounts[payload.id] = payload;
+        case 'categories/create':
+        case 'categories/update':
+        case 'categories/delete':
+          state.categories[payload.id] = payload;
           break;
         default:
           throw new Error(`unknown action.type: ${type}`);

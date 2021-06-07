@@ -29,9 +29,16 @@ export default async function RestServer({ persistence = {} } = {}) {
     )))
     .delete(jsonRoute(200, req => actions.deleteAccount(req.params.id)));
 
-  // server.route('/categories')
-  //   .get(jsonRoute(200, () => selectors.listCategories()))
-  //   .post(jsonRoute(201, (req) => actions.createCategory(req.body)))
+  server.route('/categories')
+    .get(jsonRoute(200, () => selectors.listCategories()))
+    .post(jsonRoute(201, (req) => actions.createCategory(req.body)))
+
+  server.route('/categories/:id')
+    .get(jsonRoute(200, req => selectors.getCategoryByID(req.params.id)))
+    .patch(jsonRoute(200, req => (
+      actions.updateCategory(req.params.id, req.body)
+    )))
+    .delete(jsonRoute(200, req => actions.deleteCategory(req.params.id)));
 
   server.use(function (_, res) {
     if (!res.headersSent) {
