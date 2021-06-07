@@ -16,6 +16,10 @@ function getPersistenceFromOptions({ type, filepath }) {
 
 export default async function App(options = {}) {
   const store = await Store({
+    subStores: [
+      new accountsApp.Store(),
+      new categoriesApp.Store(),
+    ],
     persistence: getPersistenceFromOptions(options.persistence),
   });
 

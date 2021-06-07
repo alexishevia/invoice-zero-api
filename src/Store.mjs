@@ -1,29 +1,26 @@
 import { FatalError } from './errors.mjs';
 
-export default async function Store({ persistence }) {
-  const state = {
-    accounts: {},
-    categories: {},
-  };
-
+export default async function Store({ subStores, persistence }) {
+  const state = {};
   let skipPersist = false;
 
+  subStores.forEach((store) => {
+    if (state[store.name]) {
+      throw new Error(`duplicate store name: ${store.name}`);
+    }
+    state[store.name] = store.state;
+  });
+
   function dispatch(action) {
-    const { type, payload } = action;
     try {
-      switch(type) {
-        case 'accounts/create':
-        case 'accounts/update':
-        case 'accounts/delete':
-          state.accounts[payload.id] = payload;
-          break;
-        case 'categories/create':
-        case 'categories/update':
-        case 'categories/delete':
-          state.categories[payload.id] = payload;
-          break;
-        default:
-          throw new Error(`unknown action.type: ${type}`);
+      let handled = false;
+      subStores.forEach((store) => {
+        if (store.dispatch(state, action)) {
+          handled = true;
+        }
+      });
+      if (!handled) {
+        throw new Error(`unknown action.type: ${action.type}`);
       }
       if (skipPersist) {
         return;
