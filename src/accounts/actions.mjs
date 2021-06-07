@@ -1,6 +1,6 @@
 import { v1 as uuidv1 } from 'uuid';
 import Validation, { ValidationError } from '../Validation.mjs';
-import { getAccountByID } from '../selectors/accounts.mjs';
+import { getAccountByID } from './selectors.mjs';
 import { InvalidRequestError, ConflictError } from '../errors.mjs';
 
 /* --- ACTIONS --- */
