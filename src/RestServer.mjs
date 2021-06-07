@@ -72,6 +72,9 @@ export default async function RestServer({ persistence = {} } = {}) {
     }
     console.error(err.stack)
     res.status(500).json({ error: 'Internal Server Error' });
+
+    // app is in unstable state, shut down server
+    process.exit(1);
   })
 
   return server;
