@@ -1,9 +1,10 @@
 import express from 'express';
-import App, {
+import App from './App.mjs';
+import {
   NotFoundError,
   InvalidRequestError,
   ConflictError
-} from './App.mjs';
+} from './errors.mjs';
 
 export default async function RestServer({ persistence = {} } = {}) {
   const app = await App({ persistence });
