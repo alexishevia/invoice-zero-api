@@ -1,5 +1,9 @@
 import express from 'express';
-import App, { NotFoundError, InvalidRequestError } from './App.mjs';
+import App, {
+  NotFoundError,
+  InvalidRequestError,
+  ConflictError
+} from './App.mjs';
 
 export default async function RestServer({ persistence = {} } = {}) {
   const app = await App({ persistence });
@@ -38,6 +42,13 @@ export default async function RestServer({ persistence = {} } = {}) {
       } catch (err) {
         next(err);
       }
+    })
+    .delete((req, res, next) => {
+      try {
+        res.status(200).json(app.actions.deleteAccount(req.params.id));
+      } catch (err) {
+        next(err);
+      }
     });
 
   server.use(function (_, res) {
@@ -48,11 +59,15 @@ export default async function RestServer({ persistence = {} } = {}) {
 
   server.use(function (err, _0, res, _1) {
     if (err instanceof InvalidRequestError) {
-      res.status(400).json({ error: err.message });
+      res.status(400).json({ name: err.name, error: err.message });
       return;
     }
     if (err instanceof NotFoundError) {
-      res.status(404).json({ error: err.message });
+      res.status(404).json({ name: err.name, error: err.message });
+      return;
+    }
+    if (err instanceof ConflictError) {
+      res.status(409).json({ name: err.name, error: err.message });
       return;
     }
     console.error(err.stack)

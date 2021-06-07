@@ -23,6 +23,9 @@ describe('createAccount', function() {
             'returns correct name': function (body) {
               expect(body.name).to.equal('Groceries');
             },
+            'returns deleted: false': function (body) {
+              expect(body.deleted).to.equal(false);
+            },
             'returns a valid modifiedAt': function(body) {
               expect(body.modifiedAt).to.match(isoDateRegex);
             },

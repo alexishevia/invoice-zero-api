@@ -19,6 +19,13 @@ export class InvalidRequestError extends Error {
   }
 }
 
+export class ConflictError extends Error {
+  name = 'ConflictError'
+  constructor(message) {
+    super(message)
+  }
+}
+
 export class FatalError extends Error {
   name = 'FatalError'
   constructor(message) {
@@ -65,6 +72,7 @@ export default async function App(options = {}) {
       id: uuidv1(),
       name: accountData.name,
       initialBalance: accountData.initialBalance,
+      deleted: false,
       modifiedAt: new Date().toISOString(),
     };
     process({ type: 'accounts/create', payload: account });
@@ -76,15 +84,45 @@ export default async function App(options = {}) {
     if (!account) {
       throw new NotFoundError(`no account with id: ${id}`);
     }
+    if (account.deleted) {
+      throw new ConflictError(`account '${id}' has been deleted`);
+    }
+    ['id', 'deleted'].forEach((prop) => {
+      if (newData.hasOwnProperty(prop)) {
+        throw new InvalidRequestError(`updating field '${prop}' is not allowed`);
+      }
+    });
     const updated = {
       ...account,
       modifiedAt: new Date().toISOString(),
     };
+    let modified = false;
     ['name', 'initialBalance'].forEach((prop) => {
-      if (newData.hasOwnProperty(prop)) {
+      if (newData.hasOwnProperty(prop) && updated[prop] !== newData[prop]) {
+        modified = true;
         updated[prop] = newData[prop];
       }
     });
+    if (!modified) {
+      return account;
+    }
+    process({ type: 'accounts/update', payload: updated });
+    return updated;
+  }
+
+  function deleteAccount(id) {
+    const account = accounts[id];
+    if (!account) {
+      throw new NotFoundError(`no account with id: ${id}`);
+    }
+    if (account.deleted) {
+      return account;
+    }
+    const updated = {
+      ...account,
+      deleted: true,
+      modifiedAt: new Date().toISOString(),
+    };
     process({ type: 'accounts/update', payload: updated });
     return updated;
   }
@@ -139,6 +177,7 @@ export default async function App(options = {}) {
     actions: {
       createAccount,
       updateAccount,
+      deleteAccount,
     },
     selectors: {
       listAccounts,

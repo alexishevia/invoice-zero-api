@@ -13,6 +13,14 @@ async function createAccount(server, data) {
   return response.body;
 }
 
+async function deleteAccount(server, id) {
+  const response = await request(server)
+    .delete(`/accounts/${id}`)
+    .send()
+    .expect(200);
+  return response.body;
+}
+
 describe('updateAccount', function() {
   let original;
 
@@ -40,6 +48,9 @@ describe('updateAccount', function() {
             },
             'returns updated account initialBalance': function(body) {
               expect(body.initialBalance).to.equal(10.75);
+            },
+            'returns deleted: false': function(body) {
+              expect(body.deleted).to.equal(false);
             },
             'returns modifiedAt': function(body) {
               expect(body.modifiedAt).to.match(isoDateRegex);
@@ -100,10 +111,10 @@ describe('updateAccount', function() {
       requestBody: { id: 'newID' },
       expect: {
         onUpdate: {
-          statusCode: 200,
+          statusCode: 400,
           body: {
-            'ignores user defined id; keeps original id': function(body) {
-              expect(body.id).to.equal(original.id);
+            'has correct error message': function(body) {
+              expect(body.error).to.include('id');
             }
           },
         },
@@ -112,6 +123,32 @@ describe('updateAccount', function() {
           body: {
             'change is not persisted': function(body) {
               expect(body.id).to.equal(original.id);
+            },
+          },
+        },
+      }
+    },
+    {
+      name: 'set deleted true',
+      setup: async function(server) {
+        original = await createAccount(server, { name: 'Trips', initialBalance: 100 });
+      },
+      id: () => original.id,
+      requestBody: { deleted: true },
+      expect: {
+        onUpdate: {
+          statusCode: 400,
+          body: {
+            'has correct error message': function(body) {
+              expect(body.error).to.include('deleted');
+            }
+          },
+        },
+        onRefetch: {
+          statusCode: 200,
+          body: {
+            'change is not persisted': function(body) {
+              expect(body.deleted).to.equal(original.deleted);
             },
           },
         },
@@ -154,6 +191,34 @@ describe('updateAccount', function() {
         onRefetch: { statusCode: 404, body: {} },
       }
     },
+    {
+      name: 'update deleted account',
+      setup: async function(server) {
+        original = await createAccount(server, { name: 'Trips', initialBalance: 100 });
+        await deleteAccount(server, original.id);
+      },
+      id: () => original.id,
+      requestBody: { initialBalance: 10.75 },
+      expect: {
+        onUpdate: {
+          statusCode: 409,
+          body: {
+            'has correct error message': function(body) {
+              expect(body.error).to.include('deleted');
+            }
+          },
+        },
+        onRefetch: {
+          statusCode: 200,
+          body: {
+            'change is not persisted': function(body) {
+              expect(body.initialBalance).to.equal(original.initialBalance);
+              expect(body.deleted).to.equal(true);
+            },
+          },
+        },
+      }
+    }
   ].forEach(function (test) {
     let server;
 
@@ -193,7 +258,7 @@ describe('updateAccount', function() {
           const res = await request(server)
             .get(`/accounts/${test.id()}`)
             .set('Accept', 'application/json')
-            .send(test.requestBody);
+            .send();
 
           statusCode = res.statusCode;
           body = res.body;

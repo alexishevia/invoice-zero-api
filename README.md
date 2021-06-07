@@ -39,6 +39,9 @@ Accounts have the following fields:
 | initialBalance | float         | Amount of money in the account      | 300.00                                 |
 |                |               | before tracking transactions in IZ. |                                        |
 |                |               |                                     |                                        |
+| deleted        | boolean       | true if the account has been        | false                                  |
+|                |               | deleted. false otherwise.           |                                        |
+|                |               |                                     |                                        |
 | modifiedAt     | string        | Last date the account was           | "2019-10-12T12:25:35.059Z"             |
 |                | full ISO 8601 | modified. (create, update, and      |                                        |
 |                | date in UTC   | delete count for "modifiedAt")      |                                        |
@@ -65,6 +68,11 @@ curl -X GET 'http://localhost:8080/accounts/c47555d0-c641-11eb-a092-f79bd9a98d6e
 curl -X PATCH 'http://localhost:8080/accounts/c47555d0-c641-11eb-a092-f79bd9a98d6e' \
   --header 'Content-Type: application/json' \
   -d '{ "name": "New Name" }'
+```
+
+#### Delete Account
+```
+curl -X DELETE 'http://localhost:8080/accounts/c47555d0-c641-11eb-a092-f79bd9a98d6e'
 ```
 
 ## Running Tests
