@@ -28,23 +28,24 @@ Accounts are the building block for IZ. All money in IZ is kept in accounts.
 Accounts have the following fields:
 
 ```
-| field name     | type          | description                         | example                                |
-| -------------- | ------------- | ----------------------------------- | -------------------------------------- |
-| id             | string        | Unique identifier for the           | "f3528a13-6683-45eb-b48c-34157c95b9db" |
-|                | non empty     | account.                            |                                        |
-|                |               |                                     |                                        |
-| name           | string        | Human-friendly name for the         | "Savings"                              |
-|                | non empty     | account.                            |                                        |
-|                |               |                                     |                                        |
-| initialBalance | float         | Amount of money in the account      | 300.00                                 |
-|                |               | before tracking transactions in IZ. |                                        |
-|                |               |                                     |                                        |
-| deleted        | boolean       | true if the account has been        | false                                  |
-|                |               | deleted. false otherwise.           |                                        |
-|                |               |                                     |                                        |
-| modifiedAt     | string        | Last date the account was           | "2019-10-12T12:25:35.059Z"             |
-|                | full ISO 8601 | modified. (create, update, and      |                                        |
-|                | date in UTC   | delete count for "modifiedAt")      |                                        |
+| field name     | type          | description                    | example                    |
+| ---            | ---           | ---                            | ---                        |
+| id             | string        | Unique identifier for the      | "f3528a13"                 |
+|                | non empty     | account.                       |                            |
+|                |               |                                |                            |
+| name           | string        | Human-friendly name for the    | "Savings"                  |
+|                | non empty     | account.                       |                            |
+|                |               |                                |                            |
+| initialBalance | float         | Amount of money in the account | 300.00                     |
+|                |               | before tracking transactions   |                            |
+|                |               | in IZ.                         |                            |
+|                |               |                                |                            |
+| deleted        | boolean       | true if the account has been   | false                      |
+|                |               | deleted. false otherwise.      |                            |
+|                |               |                                |                            |
+| modifiedAt     | string        | Last date the account was      | "2019-10-12T12:25:35.059Z" |
+|                | full ISO 8601 | modified. (create, update, and |                            |
+|                | date in UTC   | delete count for "modifiedAt") |                            |
 ```
 
 #### Create Account
