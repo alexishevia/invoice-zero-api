@@ -60,19 +60,25 @@ export default async function RestServer({ persistence = {} } = {}) {
 
   server.use(function (err, _0, res, _1) {
     if (err instanceof InvalidRequestError) {
-      res.status(400).json({ name: err.name, error: err.message });
+      const { name, message } = err;
+      res.status(400).json({ error: { name, message } });
       return;
     }
     if (err instanceof NotFoundError) {
-      res.status(404).json({ name: err.name, error: err.message });
+      const { name, message } = err;
+      res.status(404).json({ error: { name, message } });
       return;
     }
     if (err instanceof ConflictError) {
-      res.status(409).json({ name: err.name, error: err.message });
+      const { name, message } = err;
+      res.status(409).json({ error: { name, message } });
       return;
     }
     console.error(err.stack)
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: {
+      name: 'InternalServerError',
+      message: 'Internal Server Error',
+    }});
 
     // app is in unstable state, shut down server
     process.exit(1);

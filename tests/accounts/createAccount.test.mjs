@@ -49,7 +49,7 @@ describe('createAccount', function() {
           statusCode: 400,
           body: {
             'has correct error message': function(body) {
-              expect(body.error).to.include('name');
+              expect(body.error.message).to.include('name');
             }
           }
         },
@@ -71,7 +71,7 @@ describe('createAccount', function() {
           statusCode: 400,
           body: {
             'has correct error message': function(body) {
-              expect(body.error).to.include('name');
+              expect(body.error.message).to.include('name');
             }
           }
         },
@@ -93,7 +93,7 @@ describe('createAccount', function() {
           statusCode: 400,
           body: {
             'has correct error message': function(body) {
-              expect(body.error).to.include('initialBalance');
+              expect(body.error.message).to.include('initialBalance');
             }
           }
         },
@@ -115,7 +115,7 @@ describe('createAccount', function() {
           statusCode: 400,
           body: {
             'has correct error message': function(body) {
-              expect(body.error).to.include('initialBalance');
+              expect(body.error.message).to.include('initialBalance');
             }
           }
         },

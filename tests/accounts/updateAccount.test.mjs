@@ -114,7 +114,7 @@ describe('updateAccount', function() {
           statusCode: 400,
           body: {
             'has correct error message': function(body) {
-              expect(body.error).to.include('id');
+              expect(body.error.message).to.include('id');
             }
           },
         },
@@ -140,7 +140,7 @@ describe('updateAccount', function() {
           statusCode: 400,
           body: {
             'has correct error message': function(body) {
-              expect(body.error).to.include('deleted');
+              expect(body.error.message).to.include('deleted');
             }
           },
         },
@@ -204,7 +204,7 @@ describe('updateAccount', function() {
           statusCode: 409,
           body: {
             'has correct error message': function(body) {
-              expect(body.error).to.include('deleted');
+              expect(body.error.message).to.include('deleted');
             }
           },
         },
