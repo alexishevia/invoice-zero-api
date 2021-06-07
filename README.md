@@ -7,11 +7,10 @@ Invoice Zero is a personal finance system meant to be simple, and easy to use.
 3. Run `npm start` to start the server on `http://localhost:8080`
 
 ## Persistence
-By default, the app runs using "in memory" persistence. This means all data will be lost once the
-server is shut down.
+By default, data is only kept in memory. All data will be lost once the server is shut down.
 
 To enable file-based persistence:
-1. Create a new file to hold api data, eg: `touch /tmp/invoice-zero-api.mdjson`
+1. Create a new file to hold data, eg: `touch /tmp/invoice-zero-api.mdjson`
 2. Create a `.env` file in the project root with the following fields:
 ```
 PORT=8080
@@ -28,6 +27,7 @@ Accounts are the building block for IZ. All money in IZ is kept in accounts.
 
 Accounts have the following fields:
 
+```
 | field name     | type          | description                         | example                                |
 | -------------- | ------------- | ----------------------------------- | -------------------------------------- |
 | id             | string        | Unique identifier for the           | "f3528a13-6683-45eb-b48c-34157c95b9db" |
@@ -45,6 +45,7 @@ Accounts have the following fields:
 | modifiedAt     | string        | Last date the account was           | "2019-10-12T12:25:35.059Z"             |
 |                | full ISO 8601 | modified. (create, update, and      |                                        |
 |                | date in UTC   | delete count for "modifiedAt")      |                                        |
+```
 
 #### Create Account
 ```
