@@ -51,7 +51,9 @@ export default async function App(options = {}) {
 
   /* --- STATE --- */
 
-  const accounts = {};
+  const state = {
+    accounts: {},
+  };
 
   /* --- ACTIONS --- */
 
@@ -80,7 +82,7 @@ export default async function App(options = {}) {
   }
 
   function updateAccount(id, newData) {
-    const account = accounts[id];
+    const account = state.accounts[id];
     if (!account) {
       throw new NotFoundError(`no account with id: ${id}`);
     }
@@ -111,7 +113,7 @@ export default async function App(options = {}) {
   }
 
   function deleteAccount(id) {
-    const account = accounts[id];
+    const account = state.accounts[id];
     if (!account) {
       throw new NotFoundError(`no account with id: ${id}`);
     }
@@ -135,10 +137,10 @@ export default async function App(options = {}) {
     try {
       switch(type) {
         case 'accounts/create':
-          accounts[payload.id] = payload;
+          state.accounts[payload.id] = payload;
           break;
         case 'accounts/update':
-          accounts[payload.id] = payload;
+          state.accounts[payload.id] = payload;
           break;
         default:
           throw new Error(`unknown action.type: ${type}`);
@@ -154,11 +156,11 @@ export default async function App(options = {}) {
   /* --- SELECTORS --- */
 
   function listAccounts() {
-    return Object.values(accounts);
+    return Object.values(state.accounts);
   }
 
   function getAccountByID(id) {
-    const account = accounts[id];
+    const account = state.accounts[id];
     if (!account) {
       throw new NotFoundError(`No account found with id: ${id}`);
     }
