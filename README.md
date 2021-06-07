@@ -83,8 +83,15 @@ curl -X DELETE 'http://localhost:8080/accounts/c47555d0-c641-11eb-a092-f79bd9a98
 - Run a single test: `npx mocha /path/to/test.mjs`
 - Run a single test in debug mode: `npx mocha debug /path/to/test.mjs`
 
+## Architecture
+The API architecture is heavily inspired by [Redux](https://redux.js.org/).
+
+- Instead of using a database, all state is kept in memory.
+- To update state, an "action" must be dispatched.
+- For persistence, actions are added to an append-only log. On restart, state is re-built (hydrated)
+  by processing the append-only log.
+
 ## References
-This implementation is heavily inspired by this blog post:
-[Doing Without Databases in the 21st Century](https://codeburst.io/doing-without-databases-in-the-21st-century-6e25cf495373)
-
-
+- [Redux docs](https://redux.js.org/)
+- [Doing Without Databases in the 21st Century](https://codeburst.io/doing-without-databases-in-the-21st-century-6e25cf495373)
+- [Using logs to build a solid data infrastructure](http://martin.kleppmann.com/2015/05/27/logs-for-data-infrastructure.html)
