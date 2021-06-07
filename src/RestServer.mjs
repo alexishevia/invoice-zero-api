@@ -1,56 +1,37 @@
 import express from 'express';
 import App from './App.mjs';
-import {
-  NotFoundError,
-  InvalidRequestError,
-  ConflictError
-} from './errors.mjs';
+import { NotFoundError, InvalidRequestError, ConflictError } from './errors.mjs';
+
+function jsonRoute(statusCode, func) {
+  return function(req, res, next) {
+    try {
+      res.status(statusCode).json(func(req));
+    } catch(err) {
+      next(err);
+    }
+  }
+}
 
 export default async function RestServer({ persistence = {} } = {}) {
-  const app = await App({ persistence });
+  const { actions, selectors } = await App({ persistence });
   const server = express();
 
-  server.use(express.json()) // parse serverlication/json
+  server.use(express.json()) // parse application/json
 
   server.route('/accounts')
-    .get((_, res, next) => {
-      try {
-        res.status(200).json(app.selectors.listAccounts());
-      } catch(err) {
-        next(err);
-      }
-    })
-    .post((req, res, next) => {
-      try {
-        const account = app.actions.createAccount(req.body);
-        res.status(201).json(account);
-      } catch(err) {
-        next(err);
-      }
-    });
+    .get(jsonRoute(200, () => selectors.listAccounts()))
+    .post(jsonRoute(201, req => actions.createAccount(req.body)));
 
   server.route('/accounts/:id')
-    .get((req, res, next) => {
-      try {
-        res.status(200).json(app.selectors.getAccountByID(req.params.id));
-      } catch(err) {
-        next(err);
-      }
-    })
-    .patch((req, res, next) => {
-      try {
-        res.status(200).json(app.actions.updateAccount(req.params.id, req.body));
-      } catch (err) {
-        next(err);
-      }
-    })
-    .delete((req, res, next) => {
-      try {
-        res.status(200).json(app.actions.deleteAccount(req.params.id));
-      } catch (err) {
-        next(err);
-      }
-    });
+    .get(jsonRoute(200, req => selectors.getAccountByID(req.params.id)))
+    .patch(jsonRoute(200, req => (
+      actions.updateAccount(req.params.id, req.body)
+    )))
+    .delete(jsonRoute(200, req => actions.deleteAccount(req.params.id)));
+
+  // server.route('/categories')
+  //   .get(jsonRoute(200, () => selectors.listCategories()))
+  //   .post(jsonRoute(201, (req) => actions.createCategory(req.body)))
 
   server.use(function (_, res) {
     if (!res.headersSent) {
