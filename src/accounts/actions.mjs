@@ -1,33 +1,17 @@
-import { v1 as uuidv1 } from 'uuid';
-import Validation, { ValidationError } from '../Validation.mjs';
 import { getAccountByID } from './selectors.mjs';
 import { InvalidRequestError, ConflictError } from '../errors.mjs';
+import { newCreateAction } from '../actions.mjs';
+import validate from '../validate.mjs';
 
 /* --- ACTIONS --- */
 
-export function createAccount(store, accountData) {
-  try {
-    new Validation(accountData, "name").required().string().notEmpty();
-    new Validation(accountData, "initialBalance")
-      .required()
-      .number()
-      .biggerOrEqualThan(0);
-  } catch(err) {
-    if (err instanceof ValidationError) {
-      throw new InvalidRequestError(err.message);
-    }
-    throw err;
-  }
-  const account = {
-    id: uuidv1(),
-    name: accountData.name,
-    initialBalance: accountData.initialBalance,
-    deleted: false,
-    modifiedAt: new Date().toISOString(),
-  };
-  store.dispatch({ type: 'accounts/create', payload: account });
-  return account;
-}
+export const createAccount = newCreateAction({
+  type: 'accounts/create',
+  requiredFields: {
+    name: (val) => validate(val).string().notEmpty(),
+    initialBalance: (val) => validate(val).number().biggerOrEqualThan(0),
+  },
+})
 
 export function updateAccount(store, id, newData) {
   const account = getAccountByID(store.state, id);

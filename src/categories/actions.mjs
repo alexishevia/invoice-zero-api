@@ -1,28 +1,16 @@
-import { v1 as uuidv1 } from 'uuid';
-import Validation, { ValidationError } from '../Validation.mjs';
 import { getCategoryByID } from './selectors.mjs';
 import { InvalidRequestError, ConflictError } from '../errors.mjs';
+import { newCreateAction } from '../actions.mjs';
+import validate from '../validate.mjs';
 
 /* --- ACTIONS --- */
 
-export function createCategory(store, categoryData) {
-  try {
-    new Validation(categoryData, "name").required().string().notEmpty();
-  } catch(err) {
-    if (err instanceof ValidationError) {
-      throw new InvalidRequestError(err.message);
-    }
-    throw err;
-  }
-  const category = {
-    id: uuidv1(),
-    name: categoryData.name,
-    deleted: false,
-    modifiedAt: new Date().toISOString(),
-  };
-  store.dispatch({ type: 'categories/create', payload: category });
-  return category;
-}
+export const createCategory = newCreateAction({
+  type: 'categories/create',
+  requiredFields: {
+    name: (val) => validate(val).string().notEmpty(),
+  },
+});
 
 export function updateCategory(store, id, newData) {
   const category = getCategoryByID(store.state, id);
