@@ -2,8 +2,6 @@ import request from 'supertest';
 import { expect } from 'chai';
 import RestServer from '../../src/RestServer.mjs';
 
-const isoDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/; // '2021-06-05T19:58:37.863Z'
-
 async function createAccount(server, data) {
   const response = await request(server)
     .post('/accounts')
@@ -17,7 +15,7 @@ async function deleteAccount(server, id) {
   const response = await request(server)
     .delete(`/accounts/${id}`)
     .send()
-    .expect(200);
+    .expect(204);
   return response.body;
 }
 
@@ -48,12 +46,6 @@ describe('updateAccount', function() {
             },
             'returns updated account initialBalance': function(body) {
               expect(body.initialBalance).to.equal(10.75);
-            },
-            'returns deleted: false': function(body) {
-              expect(body.deleted).to.equal(false);
-            },
-            'returns modifiedAt': function(body) {
-              expect(body.modifiedAt).to.match(isoDateRegex);
             },
           },
         },
@@ -86,9 +78,6 @@ describe('updateAccount', function() {
             },
             'returns account initialBalance': function(body) {
               expect(body.initialBalance).to.equal(original.initialBalance);
-            },
-            'returns modifiedAt': function(body) {
-              expect(body.modifiedAt).to.match(isoDateRegex);
             },
           },
         },
@@ -129,58 +118,6 @@ describe('updateAccount', function() {
       }
     },
     {
-      name: 'set deleted true',
-      setup: async function(server) {
-        original = await createAccount(server, { name: 'Trips', initialBalance: 100 });
-      },
-      id: () => original.id,
-      requestBody: { deleted: true },
-      expect: {
-        onUpdate: {
-          statusCode: 400,
-          body: {
-            'has correct error message': function(body) {
-              expect(body.error.message).to.include('deleted');
-            }
-          },
-        },
-        onRefetch: {
-          statusCode: 200,
-          body: {
-            'change is not persisted': function(body) {
-              expect(body.deleted).to.equal(original.deleted);
-            },
-          },
-        },
-      }
-    },
-    {
-      name: 'update modifiedAt',
-      setup: async function(server) {
-        original = await createAccount(server, { name: 'Trips', initialBalance: 100 });
-      },
-      id: () => original.id,
-      requestBody: { modifiedAt: '2020-01-01T00:00:00.000Z' },
-      expect: {
-        onUpdate: {
-          statusCode: 400,
-          body: {
-            'has correct error message': function(body) {
-              expect(body.error.message).to.include('modifiedAt');
-            }
-          },
-        },
-        onRefetch: {
-          statusCode: 200,
-          body: {
-            'change is not persisted': function(body) {
-              expect(body.modifiedAt).to.equal(original.modifiedAt);
-            },
-          },
-        },
-      }
-    },
-    {
       name: 'update non-existing account',
       id: () => 'foo',
       requestBody: { initialBalance: 10.75 },
@@ -198,23 +135,8 @@ describe('updateAccount', function() {
       id: () => original.id,
       requestBody: { initialBalance: 10.75 },
       expect: {
-        onUpdate: {
-          statusCode: 409,
-          body: {
-            'has correct error message': function(body) {
-              expect(body.error.message).to.include('deleted');
-            }
-          },
-        },
-        onRefetch: {
-          statusCode: 200,
-          body: {
-            'change is not persisted': function(body) {
-              expect(body.initialBalance).to.equal(original.initialBalance);
-              expect(body.deleted).to.equal(true);
-            },
-          },
-        },
+        onUpdate: { statusCode: 404, body: {} },
+        onRefetch: { statusCode: 404, body: {} },
       }
     }
   ].forEach(function (test) {

@@ -12,6 +12,17 @@ function jsonRoute(statusCode, func) {
   }
 }
 
+function noContentRoute(func) {
+  return function(req, res, next) {
+    try {
+      func(req);
+      res.status(204).end();
+    } catch(err) {
+      next(err);
+    }
+  }
+}
+
 export default async function createRestServer({ persistence = {} } = {}) {
   const app = new App({ persistence });
   await app.start();
@@ -28,18 +39,21 @@ export default async function createRestServer({ persistence = {} } = {}) {
     .patch(jsonRoute(200, req => (
       app.updateAccount(req.params.id, req.body)
     )))
-    .delete(jsonRoute(200, req => app.deleteAccount(req.params.id)));
+    .delete(noContentRoute(req => app.deleteAccount(req.params.id)));
 
-  server.route('/categories')
-    .get(jsonRoute(200, () => app.listCategories()))
-    .post(jsonRoute(201, (req) => app.createCategory(req.body)))
+  // server.route('/categories')
+  //   .get(jsonRoute(200, () => app.listCategories()))
+  //   .post(jsonRoute(201, req => app.createCategory(req.body)));
 
-  server.route('/categories/:id')
-    .get(jsonRoute(200, req => app.getCategoryByID(req.params.id)))
-    .patch(jsonRoute(200, req => (
-      app.updateCategory(req.params.id, req.body)
-    )))
-    .delete(jsonRoute(200, req => app.deleteCategory(req.params.id)));
+  // server.route('/categories/:id')
+  //   .get(jsonRoute(200, req => app.getCategoryByID(req.params.id)))
+  //   .patch(jsonRoute(200, req => (
+  //     app.updateCategory(req.params.id, req.body)
+  //   )))
+  //   .delete(jsonRoute(200, req => app.deleteCategory(req.params.id)));
+
+  // server.route('/income')
+  //   .get(jsonRoute(200, () => app.listIncome()))
 
   // 404 handler
   server.use(function (_, res) {

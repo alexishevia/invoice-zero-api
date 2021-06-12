@@ -25,7 +25,7 @@ function validateNumber(value) {
         failed(`must be bigger or equal than ${num}`);
       }
       return this;
-    }
+    },
   };
 }
 

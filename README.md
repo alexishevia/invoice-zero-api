@@ -147,6 +147,40 @@ curl -X PATCH 'http://localhost:8080/categories/c47555d0-c641-11eb-a092-f79bd9a9
 curl -X DELETE 'http://localhost:8080/categories/c47555d0-c641-11eb-a092-f79bd9a98d6e'
 ```
 
+### Income
+
+An income transaction represents a deposit of money into an account.
+
+Incomes have the following fields:
+
+| field name      | type          | description                     | example                    |
+| ---             | ---           | ---                             | ---                        |
+| id              | string        | Unique identifier for the       | "aa39da77"                 |
+|                 | non empty     | income.                         |                            |
+|                 |               |                                 |                            |
+| amount          | decimal       | The amount of money being       | 13.5                       |
+|                 | bigger than 0 | deposited.                      |                            |
+|                 |               |                                 |                            |
+| accountID       | string        | ID of the account where the     | "1dc149bc"                 |
+|                 | account ID    | income is being deposited into. |                            |
+|                 |               |                                 |                            |
+| categoryID      | string        | ID of the category associated   | "49f4d831"                 |
+|                 | category ID   | with this income.               |                            |
+|                 |               |                                 |                            |
+| description     | string        | Additional notes for the        | "Freelance Project X"      |
+|                 |               | income.                         |                            |
+|                 |               |                                 |                            |
+| transactionDate | string        | Date the income happened.       | "2019-10-12"               |
+|                 | YYYY-MM-DD    |                                 |                            |
+|                 |               |                                 |                            |
+| modifiedAt      | string        | Last date the income was        | "2019-10-12T12:25:35.059Z" |
+|                 | full ISO 8601 | modified. (create, update, and  |                            |
+|                 | date in UTC   | delete count for "modifiedAt")  |                            |
+|                 |               |                                 |                            |
+| deleted         | boolean       | true if the income has been     | false                      |
+|                 |               | deleted. false otherwise.       |                            |
+
+
 ## Running Tests
 - Run all tests: `npm test`
 - Run tests in debug mode: `npm run test:debug`

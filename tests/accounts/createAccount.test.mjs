@@ -2,8 +2,6 @@ import request from 'supertest';
 import { expect } from 'chai';
 import RestServer from '../../src/RestServer.mjs';
 
-const isoDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/; // '2021-06-05T19:58:37.863Z'
-
 describe('createAccount', function() {
   [
     {
@@ -22,12 +20,6 @@ describe('createAccount', function() {
             },
             'returns correct name': function (body) {
               expect(body.name).to.equal('Groceries');
-            },
-            'returns deleted: false': function (body) {
-              expect(body.deleted).to.equal(false);
-            },
-            'returns a valid modifiedAt': function(body) {
-              expect(body.modifiedAt).to.match(isoDateRegex);
             },
           }
         },

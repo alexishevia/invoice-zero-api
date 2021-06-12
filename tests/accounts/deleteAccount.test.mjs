@@ -28,34 +28,8 @@ describe('deleteAccount', function() {
       },
       id: () => original.id,
       expect: {
-        onDelete: {
-          statusCode: 200,
-          body: {
-            'returns deleted:true': function(body) {
-              expect(body.deleted).to.equal(true);
-            },
-            'returns account id': function(body) {
-              expect(body.id).to.equal(original.id);
-            },
-            'returns account name': function(body) {
-              expect(body.name).to.equal(original.name);
-            },
-            'returns account initialBalance': function(body) {
-              expect(body.initialBalance).to.equal(original.initialBalance);
-            },
-            'returns modifiedAt': function(body) {
-              expect(body.modifiedAt).to.match(isoDateRegex);
-            },
-          },
-        },
-        onGetByID: {
-          statusCode: 200,
-          body: {
-            'change is persisted': function(body) {
-              expect(body.deleted).to.equal(true);
-            }
-          },
-        },
+        onDelete: { statusCode: 204, body: {} },
+        onGetByID: { statusCode: 404, body: {} },
       }
     },
     {

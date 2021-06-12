@@ -2,8 +2,6 @@ import request from 'supertest';
 import { expect } from 'chai';
 import RestServer from '../../src/RestServer.mjs';
 
-const isoDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/; // '2021-06-05T19:58:37.863Z'
-
 async function createAccount(server, data) {
   const response = await request(server)
     .post('/accounts')
@@ -40,9 +38,6 @@ describe('getAccountByID', function() {
           },
           'returns account initialBalance': function(body) {
             expect(body.initialBalance).to.equal(100);
-          },
-          'returns account modifiedAt': function(body) {
-            expect(body.modifiedAt).to.match(isoDateRegex);
           },
         },
       }
