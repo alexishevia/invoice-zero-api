@@ -8,6 +8,18 @@
     "test": "mocha tests/**/*.test.mjs",
     "test:debug": "mocha debug tests/**/*.test.mjs"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm run test"
+    }
+  },
+  "lint-staged": {
+    "*.{js,mjs,jsx,json,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
   "dependencies": {
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
@@ -16,8 +28,11 @@
   },
   "devDependencies": {
     "chai": "^4.3.4",
+    "husky": "^6.0.0",
+    "lint-staged": "^11.0.0",
     "mocha": "^8.4.0",
     "nodemon": "^2.0.7",
+    "prettier": "^2.3.1",
     "supertest": "^6.1.3"
   }
 }
