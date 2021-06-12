@@ -163,21 +163,19 @@ describe('updateAccount', function() {
       requestBody: { modifiedAt: '2020-01-01T00:00:00.000Z' },
       expect: {
         onUpdate: {
-          statusCode: 200,
+          statusCode: 400,
           body: {
-            'ignores user defined modifiedAt; generates new modifiedAt': function(body) {
-              expect(body.modifiedAt).to.match(isoDateRegex);
-              expect(body.modifiedAt).to.not.equal('2020-01-01T00:00:00.000Z');
+            'has correct error message': function(body) {
+              expect(body.error.message).to.include('modifiedAt');
             }
           },
         },
         onRefetch: {
           statusCode: 200,
           body: {
-            'change is persisted': function(body) {
-              expect(body.modifiedAt).to.match(isoDateRegex);
-              expect(body.modifiedAt).to.not.equal('2020-01-01T00:00:00.000Z');
-            }
+            'change is not persisted': function(body) {
+              expect(body.modifiedAt).to.equal(original.modifiedAt);
+            },
           },
         },
       }

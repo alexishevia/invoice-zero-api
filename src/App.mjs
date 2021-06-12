@@ -2,10 +2,15 @@ import InMemoryPersistence from './persistence/Memory.mjs';
 import FilePersistence from './persistence/File.mjs';
 import Store from './Store.mjs';
 
-import * as accountsApp from './accounts/app.mjs';
-import * as categoriesApp from './categories/app.mjs';
+import AccountsStore from './accounts/Store.mjs';
+import * as accountSelectors from './accounts/selectors.mjs';
+import * as accountActions from './accounts/actions.mjs';
 
-function getPersistenceFromOptions({ type, filepath }) {
+import CategoriesStore from './categories/Store.mjs';
+import * as categorySelectors from './categories/selectors.mjs';
+import * as categoryActions from './categories/actions.mjs';
+
+function getPersistenceFromOptions({ type, filepath } = {}) {
   switch(type) {
     case 'file':
       return new FilePersistence({ filepath });
@@ -14,38 +19,34 @@ function getPersistenceFromOptions({ type, filepath }) {
   }
 }
 
-export default async function App(options = {}) {
-  const store = await Store({
+export default function App(options = {}) {
+  const store = new Store({
     subStores: [
-      new accountsApp.Store(),
-      new categoriesApp.Store(),
+      new AccountsStore(),
+      new CategoriesStore(),
     ],
     persistence: getPersistenceFromOptions(options.persistence),
   });
-
-  const actions = {};
-  const selectors = {};
-  [accountsApp, categoriesApp].forEach((app) => {
-    // actions
-    Object.entries(app.actions).forEach(([name, func]) => {
-      if (actions[name]) {
-        throw new Error(`duplicate action ${name}`);
-      }
-      actions[name] = func.bind(null, store);
-    });
-
-    // selectors
-    Object.entries(app.selectors).forEach(([name, func]) => {
-      if (selectors[name]) {
-        throw new Error(`duplicate selector ${name}`);
-      }
-      selectors[name] = func.bind(null, store.state);
-    });
-  });
+  const { state } = store;
 
   return {
-    actions,
-    selectors,
+    start: async () => {
+      await store.start();
+    },
+
+    // accounts
+    createAccount: (data) => accountActions.create(store, data),
+    updateAccount: (id, data) => accountActions.update(store, id, data),
+    deleteAccount: (id) => accountActions.destroy(store, id),
+    getAccountByID: (id) => accountSelectors.byID(state, id),
+    listAccounts: () => accountSelectors.list(state),
+
+    // categories
+    createCategory: (data) => categoryActions.create(store, data),
+    updateCategory: (id, data) => categoryActions.update(store, id, data),
+    deleteCategory: (id) => categoryActions.destroy(store, id),
+    getCategoryByID: (id) => categorySelectors.byID(state, id),
+    listCategories: () => categorySelectors.list(state),
   };
 
 }

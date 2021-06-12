@@ -12,31 +12,29 @@ describe("file based persistence", () => {
   });
 
   it("serializes/deserialiazes correctly", async () => {
-    const app = await App({
-      persistence: { type: 'file', filepath },
-    });
+    const app = new App({ persistence: { type: 'file', filepath } });
+    await app.start();
 
-    const accFreelancing = app.actions.createAccount({
+    const accFreelancing = app.createAccount({
       name: 'Freelancing',
       initialBalance: 0
     });
-    const accSavings = app.actions.createAccount({
+    const accSavings = app.createAccount({
       name: 'Savings',
       initialBalance: 100
     });
 
-    app.actions.updateAccount(accFreelancing.id, { initialBalance: 50 });
+    app.updateAccount(accFreelancing.id, { initialBalance: 50 });
 
-    const newApp = await App({
-      persistence: { type: 'file', filepath },
-    });
-    expect(newApp.selectors.listAccounts().length).to.equal(2);
+    const newApp = new App({ persistence: { type: 'file', filepath } });
+    await newApp.start();
+    expect(newApp.listAccounts().length).to.equal(2);
 
-    const newAccFreelancing = newApp.selectors.getAccountByID(accFreelancing.id);
+    const newAccFreelancing = newApp.getAccountByID(accFreelancing.id);
     expect(newAccFreelancing.name).to.equal('Freelancing');
     expect(newAccFreelancing.initialBalance).to.equal(50);
 
-    const newAccSavings = newApp.selectors.getAccountByID(accSavings.id);
+    const newAccSavings = newApp.getAccountByID(accSavings.id);
     expect(newAccSavings.name).to.equal('Savings');
     expect(newAccSavings.initialBalance).to.equal(100);
   });

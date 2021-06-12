@@ -12,40 +12,43 @@ function jsonRoute(statusCode, func) {
   }
 }
 
-export default async function RestServer({ persistence = {} } = {}) {
-  const { actions, selectors } = await App({ persistence });
+export default async function createRestServer({ persistence = {} } = {}) {
+  const app = new App({ persistence });
+  await app.start();
   const server = express();
 
   server.use(express.json()) // parse application/json
 
   server.route('/accounts')
-    .get(jsonRoute(200, () => selectors.listAccounts()))
-    .post(jsonRoute(201, req => actions.createAccount(req.body)));
+    .get(jsonRoute(200, () => app.listAccounts()))
+    .post(jsonRoute(201, req => app.createAccount(req.body)));
 
   server.route('/accounts/:id')
-    .get(jsonRoute(200, req => selectors.getAccountByID(req.params.id)))
+    .get(jsonRoute(200, req => app.getAccountByID(req.params.id)))
     .patch(jsonRoute(200, req => (
-      actions.updateAccount(req.params.id, req.body)
+      app.updateAccount(req.params.id, req.body)
     )))
-    .delete(jsonRoute(200, req => actions.deleteAccount(req.params.id)));
+    .delete(jsonRoute(200, req => app.deleteAccount(req.params.id)));
 
   server.route('/categories')
-    .get(jsonRoute(200, () => selectors.listCategories()))
-    .post(jsonRoute(201, (req) => actions.createCategory(req.body)))
+    .get(jsonRoute(200, () => app.listCategories()))
+    .post(jsonRoute(201, (req) => app.createCategory(req.body)))
 
   server.route('/categories/:id')
-    .get(jsonRoute(200, req => selectors.getCategoryByID(req.params.id)))
+    .get(jsonRoute(200, req => app.getCategoryByID(req.params.id)))
     .patch(jsonRoute(200, req => (
-      actions.updateCategory(req.params.id, req.body)
+      app.updateCategory(req.params.id, req.body)
     )))
-    .delete(jsonRoute(200, req => actions.deleteCategory(req.params.id)));
+    .delete(jsonRoute(200, req => app.deleteCategory(req.params.id)));
 
+  // 404 handler
   server.use(function (_, res) {
     if (!res.headersSent) {
       res.status(404).json({ error: 'route not found' });
     }
   });
 
+  // error handler
   server.use(function (err, _0, res, _1) {
     if (err instanceof InvalidRequestError) {
       const { name, message } = err;

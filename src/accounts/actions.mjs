@@ -1,48 +1,33 @@
-import { getAccountByID } from './selectors.mjs';
-import { InvalidRequestError, ConflictError } from '../errors.mjs';
-import { newCreateAction } from '../actions.mjs';
+import { byID } from './selectors.mjs';
+import { newCreateAction, newUpdateAction } from '../actions.mjs';
 import validate from '../validate.mjs';
+
+const validators = {
+  name: (val) => validate(val).string().notEmpty(),
+  initialBalance: (val) => validate(val).number().biggerOrEqualThan(0),
+};
 
 /* --- ACTIONS --- */
 
-export const createAccount = newCreateAction({
+export const create = newCreateAction({
   type: 'accounts/create',
   requiredFields: {
-    name: (val) => validate(val).string().notEmpty(),
-    initialBalance: (val) => validate(val).number().biggerOrEqualThan(0),
+    name: validators.name,
+    initialBalance: validators.initialBalance,
   },
 })
 
-export function updateAccount(store, id, newData) {
-  const account = getAccountByID(store.state, id);
-  if (account.deleted) {
-    throw new ConflictError(`account '${id}' has been deleted`);
-  }
-  ['id', 'deleted'].forEach((prop) => {
-    if (newData.hasOwnProperty(prop)) {
-      throw new InvalidRequestError(`updating field '${prop}' is not allowed`);
-    }
-  });
-  const updated = {
-    ...account,
-    modifiedAt: new Date().toISOString(),
-  };
-  let modified = false;
-  ['name', 'initialBalance'].forEach((prop) => {
-    if (newData.hasOwnProperty(prop) && updated[prop] !== newData[prop]) {
-      modified = true;
-      updated[prop] = newData[prop];
-    }
-  });
-  if (!modified) {
-    return account;
-  }
-  store.dispatch({ type: 'accounts/update', payload: updated });
-  return updated;
-}
+export const update = newUpdateAction({
+  type: 'accounts/update',
+  selector: byID,
+  optionalFields: {
+    name: validators.name,
+    initialBalance: validators.initialBalance,
+  },
+});
 
-export function deleteAccount(store, id) {
-  const account = getAccountByID(store.state, id)
+export function destroy(store, id) {
+  const account = byID(store.state, id)
   if (account.deleted) {
     return account;
   }

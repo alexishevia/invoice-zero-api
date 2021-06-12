@@ -1,6 +1,6 @@
 import { FatalError } from './errors.mjs';
 
-export default async function Store({ subStores, persistence }) {
+export default function Store({ subStores, persistence }) {
   const state = {};
   let skipPersist = false;
 
@@ -31,12 +31,13 @@ export default async function Store({ subStores, persistence }) {
     }
   }
 
-  // hydrate store on init
-  skipPersist = true;
-  await persistence.forEachAction(dispatch);
-  skipPersist = false;
-
   return {
+    start: async () => {
+      // hydrate store
+      skipPersist = true;
+      await persistence.forEachAction(dispatch);
+      skipPersist = false;
+    },
     state,
     dispatch,
   };

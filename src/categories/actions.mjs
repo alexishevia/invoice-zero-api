@@ -1,47 +1,26 @@
-import { getCategoryByID } from './selectors.mjs';
-import { InvalidRequestError, ConflictError } from '../errors.mjs';
-import { newCreateAction } from '../actions.mjs';
+import { byID } from './selectors.mjs';
+import { newCreateAction, newUpdateAction } from '../actions.mjs';
 import validate from '../validate.mjs';
+
+const validators = {
+  name: (val) => validate(val).string().notEmpty(),
+};
 
 /* --- ACTIONS --- */
 
-export const createCategory = newCreateAction({
+export const create = newCreateAction({
   type: 'categories/create',
-  requiredFields: {
-    name: (val) => validate(val).string().notEmpty(),
-  },
+  requiredFields: { name: validators.name },
 });
 
-export function updateCategory(store, id, newData) {
-  const category = getCategoryByID(store.state, id);
-  if (category.deleted) {
-    throw new ConflictError(`category '${id}' has been deleted`);
-  }
-  ['id', 'deleted'].forEach((prop) => {
-    if (newData.hasOwnProperty(prop)) {
-      throw new InvalidRequestError(`updating field '${prop}' is not allowed`);
-    }
-  });
-  const updated = {
-    ...category,
-    modifiedAt: new Date().toISOString(),
-  };
-  let modified = false;
-  ['name'].forEach((prop) => {
-    if (newData.hasOwnProperty(prop) && updated[prop] !== newData[prop]) {
-      modified = true;
-      updated[prop] = newData[prop];
-    }
-  });
-  if (!modified) {
-    return category;
-  }
-  store.dispatch({ type: 'categories/update', payload: updated });
-  return updated;
-}
+export const update = newUpdateAction({
+  type: 'categories/update',
+  selector: byID,
+  optionalFields: { name: validators.name },
+});
 
-export function deleteCategory(store, id) {
-  const category = getCategoryByID(store.state, id)
+export function destroy(store, id) {
+  const category = byID(store.state, id)
   if (category.deleted) {
     return category;
   }
