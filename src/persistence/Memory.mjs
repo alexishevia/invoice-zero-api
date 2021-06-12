@@ -5,7 +5,7 @@
 
 export default function MemoryPersitence() {
   return {
-    appendAction: () => null,
-    forEachAction: () => Promise.resolve(),
+    append: () => null,
+    forEach: () => Promise.resolve(),
   }
 }

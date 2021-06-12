@@ -3,15 +3,15 @@ import split2 from 'split2';
 
 /*
  * FilePersistence
- * appends actions to an [ndjson](http://ndjson.org/) file.
+ * appends events to an [ndjson](http://ndjson.org/) file.
  */
 
 export default function FilePersistence({ filepath }) {
   return {
-    appendAction: (action) => {
-      return fs.appendFileSync(filepath, '\n'+JSON.stringify(action));
+    append: (event) => {
+      return fs.appendFileSync(filepath, '\n'+JSON.stringify(event));
     },
-    forEachAction: async (func) => new Promise((resolve, reject) => {
+    forEach: async (func) => new Promise((resolve, reject) => {
       try {
         fs.createReadStream(filepath)
           .pipe(split2())
