@@ -52,8 +52,16 @@ export default async function createRestServer({ persistence = {} } = {}) {
     )))
     .delete(jsonRoute(200, req => app.deleteCategory(req.params.id)));
 
-  // server.route('/income')
-  //   .get(jsonRoute(200, () => app.listIncome()))
+  server.route('/income')
+    .get(jsonRoute(200, () => app.listIncome()))
+    .post(jsonRoute(201, req => app.createIncome(req.body)));
+
+  server.route('/income/:id')
+    .get(jsonRoute(200, req => app.getIncomeByID(req.params.id)))
+    .patch(jsonRoute(200, req => (
+      app.updateIncome(req.params.id, req.body)
+    )))
+    .delete(jsonRoute(200, req => app.deleteIncome(req.params.id)));
 
   // 404 handler
   server.use(function (_, res) {
@@ -64,6 +72,13 @@ export default async function createRestServer({ persistence = {} } = {}) {
 
   // error handler
   server.use(function (err, _0, res, _1) {
+    if (err instanceof SyntaxError) {
+      res.status(400).json({ error: {
+        name: 'InvalidJSON',
+        message: 'request body must be valid JSON'
+      }});
+      return
+    }
     if (err instanceof InvalidRequestError) {
       const { name, message } = err;
       res.status(400).json({ error: { name, message } });

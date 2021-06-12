@@ -4,6 +4,7 @@ import FilePersistence from './persistence/File.mjs';
 import { NotFoundError } from './errors.mjs';
 import * as Account from './Account.mjs';
 import * as Category from './Category.mjs';
+import * as Income from './Income.mjs';
 
 function getPersistenceFromOptions({ type, filepath } = {}) {
   switch(type) {
@@ -19,7 +20,7 @@ function getTimestamp() {
 }
 
 const allReducers = {};
-[Account, Category].forEach(({ actions }) => {
+[Account, Category, Income].forEach(({ actions }) => {
   Object.entries(actions).forEach(([type, action]) => {
     if (allReducers[type]) {
       throw new Error(`duplicate reducer for type: ${type}`);
@@ -120,7 +121,31 @@ export default function App(options = {}) {
     listCategories: () => Object.values(state.categories),
 
     // income
-    // listIncome: () => Object.values(state.income),
+    listIncome: () => Object.values(state.income),
+    createIncome: (data) => {
+      const type = 'income/create';
+      const payload = Income.actions[type].payload(state, data);
+      dispatch({ type, payload });
+      return state.income[payload.id];
+    },
+    updateIncome: (id, data) => {
+      const type = 'income/update';
+      const payload = Income.actions[type].payload(state, id, data);
+      if (payload) { dispatch({ type, payload }); }
+      return state.income[id];
+    },
+    deleteIncome: (id) => {
+      const type = 'income/delete';
+      const payload = Income.actions[type].payload(state, id);
+      if (payload) { dispatch({ type, payload }); }
+      return;
+    },
+    getIncomeByID: (id) => {
+      if (state.income[id]) {
+        return state.income[id];
+      }
+      throw new NotFoundError(`no income with id: ${id}`);
+    },
   };
 
 }

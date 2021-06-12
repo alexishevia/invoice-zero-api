@@ -5,20 +5,26 @@ Invoice Zero is a personal finance system meant to be simple, and easy to use.
 2. [Persistence](#persistence)
 3. [API](#api)
 	1. [Accounts](#accounts)
-		1. [Create Account](#create-account)
-		2. [List Accounts](#list-accounts)
+		1. [List Accounts](#list-accounts)
+		2. [Create Account](#create-account)
 		3. [Get Account by ID](#get-account-by-id)
 		4. [Update Account](#update-account)
 		5. [Delete Account](#delete-account)
 	2. [Categories](#categories)
-		1. [Create Category](#create-category)
-		2. [List Categories](#list-categories)
+		1. [List Categories](#list-categories)
+		2. [Create Category](#create-category)
 		3. [Get Category by ID](#get-category-by-id)
 		4. [Update Category](#update-category)
 		5. [Delete Category](#delete-category)
-3. [Running Tests](#running-tests)
-4. [Architecture](#architecture)
-5. [References](#references)
+	3. [Income](#income)
+		1. [List Income](#list-income)
+		2. [Create Income](#create-income)
+		3. [Get Income by ID](#get-income-by-id)
+		4. [Update Income](#update-income)
+		5. [Delete Income](#delete-income)
+4. [Running Tests](#running-tests)
+5. [Architecture](#architecture)
+6. [References](#references)
 
 ## Getting Started
 1. Install [nodeJS](https://nodejs.org/) (v14.17.0 preferred)
@@ -57,13 +63,11 @@ Accounts have the following fields:
 | initialBalance | float         | Amount of money in the account | 300.00                     |
 |                |               | before tracking transactions   |                            |
 |                |               | in IZ.                         |                            |
-|                |               |                                |                            |
-| deleted        | boolean       | true if the account has been   | false                      |
-|                |               | deleted. false otherwise.      |                            |
-|                |               |                                |                            |
-| modifiedAt     | string        | Last date the account was      | "2019-10-12T12:25:35.059Z" |
-|                | full ISO 8601 | modified. (create, update, and |                            |
-|                | date in UTC   | delete count for "modifiedAt") |                            |
+```
+
+#### List Accounts
+```
+curl -X GET 'http://localhost:8080/accounts'
 ```
 
 #### Create Account
@@ -71,11 +75,6 @@ Accounts have the following fields:
 curl -X POST 'http://localhost:8080/accounts' \
   --header 'Content-Type: application/json' \
   -d '{"name": "Savings", "initialBalance": 300}'
-```
-
-#### List Accounts
-```
-curl -X GET 'http://localhost:8080/accounts'
 ```
 
 #### Get Account by ID
@@ -109,13 +108,11 @@ Categories have the following fields:
 |            |               |                                       |                            |
 | name       | string        | Human-friendly name for the category. | "Groceries"                |
 |            | non empty     |                                       |                            |
-|            |               |                                       |                            |
-| modifiedAt | string        | Last date the category was modified.  | "2019-10-12T12:25:35.059Z" |
-|            | full ISO 8601 | (create, update, and delete count     |                            |
-|            | date in UTC   | for "modifiedAt")                     |                            |
-|            |               |                                       |                            |
-| deleted    | boolean       | true if the category has been         | false                      |
-|            |               | deleted. false otherwise.             |                            |
+```
+
+#### List Categories
+```
+curl -X GET 'http://localhost:8080/categories'
 ```
 
 #### Create Category
@@ -123,11 +120,6 @@ Categories have the following fields:
 curl -X POST 'http://localhost:8080/categories' \
   --header 'Content-Type: application/json' \
   -d '{"name": "Groceries" }'
-```
-
-#### List Categories
-```
-curl -X GET 'http://localhost:8080/categories'
 ```
 
 #### Get Category by ID
@@ -149,10 +141,11 @@ curl -X DELETE 'http://localhost:8080/categories/c47555d0-c641-11eb-a092-f79bd9a
 
 ### Income
 
-An income transaction represents a deposit of money into an account.
+An income represents a deposit of money into an account.
 
-Incomes have the following fields:
+Income objects have the following fields:
 
+```
 | field name      | type          | description                     | example                    |
 | ---             | ---           | ---                             | ---                        |
 | id              | string        | Unique identifier for the       | "aa39da77"                 |
@@ -172,14 +165,42 @@ Incomes have the following fields:
 |                 |               |                                 |                            |
 | transactionDate | string        | Date the income happened.       | "2019-10-12"               |
 |                 | YYYY-MM-DD    |                                 |                            |
-|                 |               |                                 |                            |
-| modifiedAt      | string        | Last date the income was        | "2019-10-12T12:25:35.059Z" |
-|                 | full ISO 8601 | modified. (create, update, and  |                            |
-|                 | date in UTC   | delete count for "modifiedAt")  |                            |
-|                 |               |                                 |                            |
-| deleted         | boolean       | true if the income has been     | false                      |
-|                 |               | deleted. false otherwise.       |                            |
+```
 
+#### List Income
+```
+curl -X GET 'http://localhost:8080/income'
+```
+
+#### Create Income
+```
+curl -X request POST 'http://localhost:8080/income' \
+  --header 'Content-Type: application/json' \
+  -d '{
+    "amount": 1.50,
+    "accountID": "3b236180-cbac-11eb-b83e-2302669194e6",
+    "categoryID": "cce25210-cbb7-11eb-bd78-49cc8f2ce11d",
+    "description": "getting paid!",
+    "transactionDate": "2021-06-12"
+}'
+```
+
+#### Get Income by ID
+```
+curl -X GET 'http://localhost:8080/income/ed72ca80-cbbe-11eb-a10b-0fef5f4c1945'
+```
+
+#### Update Income
+```
+curl -X PATCH 'http://localhost:8080/income/ed72ca80-cbbe-11eb-a10b-0fef5f4c1945' \
+  --header 'Content-Type: application/json' \
+  -d '{ "amount": 2.45, "description": "mo money, no problems" }'
+```
+
+#### Delete Income
+```
+curl -X DELETE 'http://localhost:8080/income/79507f10-cbc0-11eb-8dc8-4f3fc972d5e6'
+```
 
 ## Running Tests
 - Run all tests: `npm test`
