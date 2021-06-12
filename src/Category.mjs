@@ -7,14 +7,10 @@ const parse = {
     validate(val).string().notEmpty();
     return val;
   },
-  initialBalance: (val) => {
-    validate(val).number().biggerOrEqualThan(0);
-    return val;
-  },
 };
 
 function getNewFields(data) {
-  const parsed = ['name', 'initialBalance'].reduce((memo, key) => {
+  const parsed = ['name'].reduce((memo, key) => {
     try {
       memo[key] = parse[key](data[key]);
     } catch (err) {
@@ -26,7 +22,7 @@ function getNewFields(data) {
 }
 
 function getModifiedFields(original, data) {
-  const allowedFields = new Set(['name', 'initialBalance']);
+  const allowedFields = new Set(['name']);
   Object.keys(data).forEach((key) => {
     if (!allowedFields.has(key)) {
       throw new InvalidRequestError(`field is not supported: ${key}`);
@@ -49,39 +45,39 @@ function getModifiedFields(original, data) {
 }
 
 export const actions = {
-  'accounts/create': {
+  'categories/create': {
     payload: (data) => getNewFields(data),
     reducer: ({ state, payload }) => {
-      state.accounts[payload.id] = payload;
+      state.categories[payload.id] = payload;
     },
   },
-  'accounts/update': {
+  'categories/update': {
     payload: (state, id, data) => {
-      const original = state.accounts[id];
+      const original = state.categories[id];
       if (!original) {
-        throw new NotFoundError(`no account with id: ${id}`);
+        throw new NotFoundError(`no category with id: ${id}`);
       }
       const modified = getModifiedFields(original, data);
       if (Object.keys(modified).length == 0) { return null } // nothing to dispatch
       return { id, ...modified };
     },
     reducer: ({ state, payload }) => {
-      const account = state.accounts[payload.id];
+      const category = state.categories[payload.id];
       Object.entries(payload).forEach(([key, val]) => {
-        account[key] = val;
+        category[key] = val;
       });
     },
   },
-  'accounts/delete': {
+  'categories/delete': {
     payload: (state, id) => {
-      const original = state.accounts[id];
+      const original = state.categories[id];
       if (!original) {
-        throw new NotFoundError(`no account with id: ${id}`);
+        throw new NotFoundError(`no category with id: ${id}`);
       }
       return { id };
     },
     reducer: ({ state, payload }) => {
-      delete state.accounts[payload.id];
+      delete state.categories[payload.id];
     },
   },
 };

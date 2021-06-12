@@ -41,16 +41,16 @@ export default async function createRestServer({ persistence = {} } = {}) {
     )))
     .delete(noContentRoute(req => app.deleteAccount(req.params.id)));
 
-  // server.route('/categories')
-  //   .get(jsonRoute(200, () => app.listCategories()))
-  //   .post(jsonRoute(201, req => app.createCategory(req.body)));
+  server.route('/categories')
+    .get(jsonRoute(200, () => app.listCategories()))
+    .post(jsonRoute(201, req => app.createCategory(req.body)));
 
-  // server.route('/categories/:id')
-  //   .get(jsonRoute(200, req => app.getCategoryByID(req.params.id)))
-  //   .patch(jsonRoute(200, req => (
-  //     app.updateCategory(req.params.id, req.body)
-  //   )))
-  //   .delete(jsonRoute(200, req => app.deleteCategory(req.params.id)));
+  server.route('/categories/:id')
+    .get(jsonRoute(200, req => app.getCategoryByID(req.params.id)))
+    .patch(jsonRoute(200, req => (
+      app.updateCategory(req.params.id, req.body)
+    )))
+    .delete(jsonRoute(200, req => app.deleteCategory(req.params.id)));
 
   // server.route('/income')
   //   .get(jsonRoute(200, () => app.listIncome()))
