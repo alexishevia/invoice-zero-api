@@ -5,6 +5,7 @@ import { NotFoundError } from './errors.mjs';
 import * as Account from './Account.mjs';
 import * as Category from './Category.mjs';
 import * as Income from './Income.mjs';
+import * as Expense from './Expense.mjs';
 
 function getPersistenceFromOptions({ type, filepath } = {}) {
   switch(type) {
@@ -20,7 +21,7 @@ function getTimestamp() {
 }
 
 const allReducers = {};
-[Account, Category, Income].forEach(({ actions }) => {
+[Account, Category, Income, Expense].forEach(({ actions }) => {
   Object.entries(actions).forEach(([type, action]) => {
     if (allReducers[type]) {
       throw new Error(`duplicate reducer for type: ${type}`);
@@ -35,6 +36,7 @@ export default function App(options = {}) {
     accounts: {},
     categories: {},
     income: {},
+    expenses: {},
   };
 
   function reducer(event) {
@@ -88,7 +90,8 @@ export default function App(options = {}) {
       return;
     },
     getAccountByID: (id) => {
-      if (state.accounts[id]) { return state.accounts[id]; }
+      const account = state.accounts[id]
+      if (account) { return account; }
       throw new NotFoundError(`no account with id: ${id}`);
     },
     listAccounts: () => Object.values(state.accounts),
@@ -113,8 +116,9 @@ export default function App(options = {}) {
       return;
     },
     getCategoryByID: (id) => {
-      if (state.categories[id]) {
-        return state.categories[id];
+      const category = state.categories[id]
+      if (category) {
+        return category;
       }
       throw new NotFoundError(`no category with id: ${id}`);
     },
@@ -141,10 +145,37 @@ export default function App(options = {}) {
       return;
     },
     getIncomeByID: (id) => {
-      if (state.income[id]) {
-        return state.income[id];
+      const income = state.income[id];
+      if (income) {
+        return income;
       }
       throw new NotFoundError(`no income with id: ${id}`);
+    },
+
+    // expenses
+    listExpenses: () => Object.values(state.expenses),
+    createExpense: (data) => {
+      const type = 'expenses/create';
+      const payload = Expense.actions[type].payload(state, data);
+      dispatch({ type, payload });
+      return state.expenses[payload.id];
+    },
+    updateExpense: (id, data) => {
+      const type = 'expenses/update';
+      const payload = Expense.actions[type].payload(state, id, data);
+      if (payload) { dispatch({ type, payload }); }
+      return state.expenses[id];
+    },
+    deleteExpense: (id) => {
+      const type = 'expenses/delete';
+      const payload = Expense.actions[type].payload(state, id);
+      if (payload) { dispatch({ type, payload }); }
+      return;
+    },
+    getExpenseByID: (id) => {
+      const expense = state.expenses[id];
+      if (expense) { return expense; }
+      throw new NotFoundError(`no expense with id: ${id}`);
     },
   };
 

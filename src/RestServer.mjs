@@ -63,6 +63,17 @@ export default async function createRestServer({ persistence = {} } = {}) {
     )))
     .delete(jsonRoute(200, req => app.deleteIncome(req.params.id)));
 
+  server.route('/expenses')
+    .get(jsonRoute(200, () => app.listExpenses()))
+    .post(jsonRoute(201, req => app.createExpense(req.body)));
+
+  server.route('/expenses/:id')
+    .get(jsonRoute(200, req => app.getExpenseByID(req.params.id)))
+    .patch(jsonRoute(200, req => (
+      app.updateExpense(req.params.id, req.body)
+    )))
+    .delete(jsonRoute(200, req => app.deleteExpense(req.params.id)));
+
   // 404 handler
   server.use(function (_, res) {
     if (!res.headersSent) {
