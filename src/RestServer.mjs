@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import App from "./App.mjs";
 import {
   NotFoundError,
@@ -33,6 +34,7 @@ export default async function createRestServer({ persistence = {} } = {}) {
   const server = express();
 
   server.use(express.json()); // parse application/json
+  server.use(cors());
 
   server
     .route("/accounts")

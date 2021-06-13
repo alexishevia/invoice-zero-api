@@ -1,2 +1,4 @@
 # To-Do
-- [ ] figure out how to deploy
+- [ ] connect frontend with API
+- [ ] add API authentication
+- [ ] add error reporting
