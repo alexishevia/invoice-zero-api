@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -e # exit if any command fails
+
+# read version from package.json
+version="v$(cat ./package.json | jq -r .version)"
+
+# create git tag and push to origin
+git tag $version
+git push --tags
+
+# build docker image with latest code
+docker build . -t alexishevia/invoice-zero-api
+
+# tag docker image and push to dockerhub
+docker tag alexishevia/invoice-zero-api:latest "alexishevia/invoice-zero-api:${version}"
+docker push alexishevia/invoice-zero-api:latest
+docker push "alexishevia/invoice-zero-api:${version}"

@@ -10,8 +10,10 @@ Invoice Zero is a personal finance system meant to be simple, and easy to use.
 	4. [Expenses](#expenses)
 	5. [Transfers](#transfers)
 4. [Running Tests](#running-tests)
-5. [Architecture](#architecture)
-6. [References](#references)
+5. [Docker Image](#docker-image)
+6. [Deployment](#deployment)
+7. [Architecture](#architecture)
+8. [References](#references)
 
 ## Getting Started
 1. Install [nodeJS](https://nodejs.org/) (v14.17.0 preferred)
@@ -29,21 +31,6 @@ PORT=8080
 PERSISTENCE_TYPE="file"
 PERSISTENCE_FILEPATH="/tmp/invoice-zero-api.mdjson"
 ```
-
-## Docker Image
-To make deployment easier, a `Dockerfile` is included.
-
-Build image: `docker build . -t alexishevia/invoice-zero-api`
-Run container: 
-```
-docker run -d \
-  -v /tmp/invoice-zero-api.mdjson:/invoice-zero-api.mdjson \
-  -p 8080:8080 \
-  --name izapi \
-  alexishevia/invoice-zero-api
-```
-Stop/remove container: `docker stop izapi && docker rm izapi`
-Generate git and docker tags: ``
 
 ## Models
 
@@ -164,6 +151,33 @@ Transfers have the following fields:
 - Run tests in debug mode: `npm run test:debug`
 - Run a single test: `npx mocha /path/to/test.mjs`
 - Run a single test in debug mode: `npx mocha debug /path/to/test.mjs`
+
+## Docker Image
+To make deployment easier, a `Dockerfile` is included.
+
+Build image: `docker build . -t alexishevia/invoice-zero-api`
+Run container: 
+```
+docker run -d \
+  -v /tmp/invoice-zero-api.mdjson:/invoice-zero-api.mdjson \
+  -p 8080:8080 \
+  --name izapi \
+  alexishevia/invoice-zero-api
+```
+Stop/remove container: `docker stop izapi && docker rm izapi`
+Generate git and docker tags: `git tag`
+
+## Deployment
+When you're ready to deploy a new version:
+1. Update the `version` in `package.json`
+2. Run `./bin/deploy`
+
+The `./bin/deploy` script:
+- reads the `version` from `package.json`
+- creates a new git tag and pushes to origin
+- builds the docker image with latest code
+- tags the docker image and pushes to dockerhub
+
 
 ## Architecture
 The API architecture is heavily inspired by [Redux](https://redux.js.org/).
