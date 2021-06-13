@@ -1,2 +1,2 @@
 # To-Do
-- [ ] add CRUD for transfer
+- [ ] figure out how to deploy
