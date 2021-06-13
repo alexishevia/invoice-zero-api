@@ -56,7 +56,7 @@ function getModifiedFields(original, state, data) {
   });
   const modified = {};
   for (const key of allowedFields) {
-    if (!data.hasOwnProperty(key)) {
+    if (!Object.hasOwnProperty.call(data, key)) {
       continue;
     }
     let newVal;
@@ -72,42 +72,44 @@ function getModifiedFields(original, state, data) {
   return modified;
 }
 
-export const actions = {
-  "transfers/create": {
-    payload: (state, data) => getNewFields(state, data),
-    reducer: ({ state, payload }) => {
-      state.transfers[payload.id] = payload;
+export default {
+  actions: {
+    "transfers/create": {
+      payload: (state, data) => getNewFields(state, data),
+      reducer: ({ state, payload }) => {
+        state.transfers[payload.id] = payload;
+      },
     },
-  },
-  "transfers/update": {
-    payload: (state, id, data) => {
-      const original = state.transfers[id];
-      if (!original) {
-        throw new NotFoundError(`no transfer with id: ${id}`);
-      }
-      const modified = getModifiedFields(original, state, data);
-      if (Object.keys(modified).length == 0) {
-        return null;
-      } // nothing to dispatch
-      return { id, ...modified };
+    "transfers/update": {
+      payload: (state, id, data) => {
+        const original = state.transfers[id];
+        if (!original) {
+          throw new NotFoundError(`no transfer with id: ${id}`);
+        }
+        const modified = getModifiedFields(original, state, data);
+        if (Object.keys(modified).length === 0) {
+          return null;
+        } // nothing to dispatch
+        return { id, ...modified };
+      },
+      reducer: ({ state, payload }) => {
+        const transfer = state.transfers[payload.id];
+        Object.entries(payload).forEach(([key, val]) => {
+          transfer[key] = val;
+        });
+      },
     },
-    reducer: ({ state, payload }) => {
-      const transfer = state.transfers[payload.id];
-      Object.entries(payload).forEach(([key, val]) => {
-        transfer[key] = val;
-      });
-    },
-  },
-  "transfers/delete": {
-    payload: (state, id) => {
-      const original = state.transfers[id];
-      if (!original) {
-        throw new NotFoundError(`no transfer with id: ${id}`);
-      }
-      return { id };
-    },
-    reducer: ({ state, payload }) => {
-      delete state.transfers[payload.id];
+    "transfers/delete": {
+      payload: (state, id) => {
+        const original = state.transfers[id];
+        if (!original) {
+          throw new NotFoundError(`no transfer with id: ${id}`);
+        }
+        return { id };
+      },
+      reducer: ({ state, payload }) => {
+        delete state.transfers[payload.id];
+      },
     },
   },
 };

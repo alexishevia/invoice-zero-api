@@ -2,11 +2,11 @@ import { v1 as uuidv1 } from "uuid";
 import InMemoryPersistence from "./persistence/Memory.mjs";
 import FilePersistence from "./persistence/File.mjs";
 import { NotFoundError } from "./errors.mjs";
-import * as Account from "./Account.mjs";
-import * as Category from "./Category.mjs";
-import * as Income from "./Income.mjs";
-import * as Expense from "./Expense.mjs";
-import * as Transfer from "./Transfer.mjs";
+import Account from "./Account.mjs";
+import Category from "./Category.mjs";
+import Income from "./Income.mjs";
+import Expense from "./Expense.mjs";
+import Transfer from "./Transfer.mjs";
 
 function getPersistenceFromOptions({ type, filepath } = {}) {
   switch (type) {
@@ -93,7 +93,6 @@ export default function App(options = {}) {
       if (payload) {
         dispatch({ type, payload });
       }
-      return;
     },
     getAccountByID: (id) => {
       const account = state.accounts[id];
@@ -125,7 +124,6 @@ export default function App(options = {}) {
       if (payload) {
         dispatch({ type, payload });
       }
-      return;
     },
     getCategoryByID: (id) => {
       const category = state.categories[id];
@@ -158,7 +156,6 @@ export default function App(options = {}) {
       if (payload) {
         dispatch({ type, payload });
       }
-      return;
     },
     getIncomeByID: (id) => {
       const income = state.income[id];
@@ -190,7 +187,6 @@ export default function App(options = {}) {
       if (payload) {
         dispatch({ type, payload });
       }
-      return;
     },
     getExpenseByID: (id) => {
       const expense = state.expenses[id];
@@ -222,7 +218,6 @@ export default function App(options = {}) {
       if (payload) {
         dispatch({ type, payload });
       }
-      return;
     },
     getTransferByID: (id) => {
       const transfer = state.transfers[id];

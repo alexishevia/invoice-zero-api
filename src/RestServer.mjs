@@ -7,7 +7,7 @@ import {
 } from "./errors.mjs";
 
 function jsonRoute(statusCode, func) {
-  return function (req, res, next) {
+  return (req, res, next) => {
     try {
       res.status(statusCode).json(func(req));
     } catch (err) {
@@ -17,7 +17,7 @@ function jsonRoute(statusCode, func) {
 }
 
 function noContentRoute(func) {
-  return function (req, res, next) {
+  return (req, res, next) => {
     try {
       func(req);
       res.status(204).end();
@@ -90,14 +90,14 @@ export default async function createRestServer({ persistence = {} } = {}) {
     .delete(jsonRoute(200, (req) => app.deleteTransfer(req.params.id)));
 
   // 404 handler
-  server.use(function (_, res) {
+  server.use((_req, res) => {
     if (!res.headersSent) {
       res.status(404).json({ error: "route not found" });
     }
   });
 
   // error handler
-  server.use(function (err, _0, res, _1) {
+  server.use((err, _req, res, _next) => {
     if (err instanceof SyntaxError) {
       res.status(400).json({
         error: {

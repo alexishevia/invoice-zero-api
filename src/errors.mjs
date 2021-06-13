@@ -1,27 +1,13 @@
-export class NotFoundError extends Error {
-  name = 'NotFoundError'
-  constructor(message) {
-    super(message)
-  }
-}
+/* eslint max-classes-per-file: [0] */
 
-export class InvalidRequestError extends Error {
-  name = 'InvalidRequestError'
-  constructor(message) {
-    super(message)
-  }
-}
+export class NotFoundError extends Error {}
+NotFoundError.prototype.name = "NotFoundError";
 
-export class ConflictError extends Error {
-  name = 'ConflictError'
-  constructor(message) {
-    super(message)
-  }
-}
+export class InvalidRequestError extends Error {}
+InvalidRequestError.prototype.name = "InvalidRequestError";
 
-export class FatalError extends Error {
-  name = 'FatalError'
-  constructor(message) {
-    super(message)
-  }
-}
+export class ConflictError extends Error {}
+ConflictError.prototype.name = "ConflictError";
+
+export class FatalError extends Error {}
+FatalError.prototype.name = "FatalError";
