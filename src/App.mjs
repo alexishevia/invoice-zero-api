@@ -102,6 +102,7 @@ export default function App(options = {}) {
       throw new NotFoundError(`no account with id: ${id}`);
     },
     listAccounts: () => Object.values(state.accounts),
+    getAccountBalance: (id) => Account.selectors.accountBalance(state, id),
 
     // categories
     createCategory: (data) => {
@@ -135,7 +136,7 @@ export default function App(options = {}) {
     listCategories: () => Object.values(state.categories),
 
     // income
-    listIncome: () => Object.values(state.income),
+    listIncome: (query) => Income.selectors.list(state, query),
     createIncome: (data) => {
       const type = "income/create";
       const payload = Income.actions[type].payload(state, data);
@@ -166,7 +167,7 @@ export default function App(options = {}) {
     },
 
     // expenses
-    listExpenses: () => Object.values(state.expenses),
+    listExpenses: (query) => Expense.selectors.list(state, query),
     createExpense: (data) => {
       const type = "expenses/create";
       const payload = Expense.actions[type].payload(state, data);
@@ -197,7 +198,7 @@ export default function App(options = {}) {
     },
 
     // transfers
-    listTransfers: () => Object.values(state.transfers),
+    listTransfers: (query) => Transfer.selectors.list(state, query),
     createTransfer: (data) => {
       const type = "transfers/create";
       const payload = Transfer.actions[type].payload(state, data);

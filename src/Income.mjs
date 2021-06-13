@@ -129,4 +129,36 @@ export default {
       },
     },
   },
+  selectors: {
+    list: (state, query = {}) => {
+      const { fromDate, toDate, accountIDs, categoryIDs } = query;
+
+      if (categoryIDs && categoryIDs.size === 0) {
+        return [];
+      }
+      if (accountIDs && accountIDs.size === 0) {
+        return [];
+      }
+
+      const fromDateFilter = ({ transactionDate }) =>
+        !fromDate || transactionDate >= fromDate;
+
+      const toDateFilter = ({ transactionDate }) =>
+        !toDate || transactionDate <= toDate;
+
+      const accountFilter = ({ accountID }) =>
+        !accountIDs || accountIDs.has(accountID);
+
+      const categoryFilter = ({ categoryID }) =>
+        !categoryIDs || categoryIDs.has(categoryID);
+
+      return Object.values(state.income).filter(
+        (transfer) =>
+          fromDateFilter(transfer) &&
+          toDateFilter(transfer) &&
+          accountFilter(transfer) &&
+          categoryFilter(transfer)
+      );
+    },
+  },
 };

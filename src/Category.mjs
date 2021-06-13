@@ -10,7 +10,7 @@ const parse = {
 };
 
 function getNewFields(data) {
-  const parsed = ["name"].reduce((memo, key) => {
+  const required = ["name"].reduce((memo, key) => {
     try {
       memo[key] = parse[key](data[key]);
     } catch (err) {
@@ -18,7 +18,7 @@ function getNewFields(data) {
     }
     return memo;
   }, {});
-  return { id: uuidv1(), ...parsed };
+  return { id: uuidv1(), ...required };
 }
 
 function getModifiedFields(original, data) {

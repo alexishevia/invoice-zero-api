@@ -90,4 +90,32 @@ export default {
       },
     },
   },
+  selectors: {
+    accountBalance: (state, id) => {
+      const account = state.accounts[id];
+      if (!account) {
+        throw new NotFoundError(`no account with id: ${id}`);
+      }
+      let balance = account.initialBalance;
+      Object.values(state.income).forEach(({ accountID, amount }) => {
+        if (accountID === id) {
+          balance += amount;
+        }
+      });
+      Object.values(state.expenses).forEach(({ accountID, amount }) => {
+        if (accountID === id) {
+          balance -= amount;
+        }
+      });
+      Object.values(state.transfers).forEach(({ fromID, toID, amount }) => {
+        if (fromID === id) {
+          balance -= amount;
+        }
+        if (toID === id) {
+          balance += amount;
+        }
+      });
+      return { [id]: balance };
+    },
+  },
 };

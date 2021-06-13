@@ -112,4 +112,32 @@ export default {
       },
     },
   },
+  selectors: {
+    list: (state, query = {}) => {
+      const { fromDate, toDate, accountIDs } = query;
+
+      const fromDateFilter = ({ transactionDate }) =>
+        !fromDate || transactionDate >= fromDate;
+
+      const toDateFilter = ({ transactionDate }) =>
+        !toDate || transactionDate <= toDate;
+
+      const accountFilter = ({ fromID, toID }) => {
+        if (!accountIDs) {
+          return true;
+        }
+        if (accountIDs.size === 0) {
+          return false;
+        }
+        return accountIDs.has(fromID) || accountIDs.has(toID);
+      };
+
+      return Object.values(state.transfers).filter(
+        (transfer) =>
+          fromDateFilter(transfer) &&
+          toDateFilter(transfer) &&
+          accountFilter(transfer)
+      );
+    },
+  },
 };

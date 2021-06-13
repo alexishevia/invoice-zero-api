@@ -28,6 +28,16 @@ function noContentRoute(func) {
   };
 }
 
+// convert a comma separated list into a set
+function csvToSet(str) {
+  return new Set(
+    (str || "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean)
+  );
+}
+
 export default async function createRestServer({ persistence = {} } = {}) {
   const app = new App({ persistence });
   await app.start();
@@ -48,6 +58,10 @@ export default async function createRestServer({ persistence = {} } = {}) {
     .delete(noContentRoute((req) => app.deleteAccount(req.params.id)));
 
   server
+    .route("/accountBalance/:id")
+    .get(jsonRoute(200, (req) => app.getAccountBalance(req.params.id)));
+
+  server
     .route("/categories")
     .get(jsonRoute(200, () => app.listCategories()))
     .post(jsonRoute(201, (req) => app.createCategory(req.body)));
@@ -60,7 +74,21 @@ export default async function createRestServer({ persistence = {} } = {}) {
 
   server
     .route("/income")
-    .get(jsonRoute(200, () => app.listIncome()))
+    .get(
+      jsonRoute(200, (req) => {
+        const query = {
+          fromDate: req.query.fromDate,
+          toDate: req.query.toDate,
+        };
+        if (Object.hasOwnProperty.call(req.query, "accountIDs")) {
+          query.accountIDs = csvToSet(req.query.accountIDs);
+        }
+        if (Object.hasOwnProperty.call(req.query, "categoryIDs")) {
+          query.categoryIDs = csvToSet(req.query.categoryIDs);
+        }
+        return app.listIncome(query);
+      })
+    )
     .post(jsonRoute(201, (req) => app.createIncome(req.body)));
 
   server
@@ -71,7 +99,21 @@ export default async function createRestServer({ persistence = {} } = {}) {
 
   server
     .route("/expenses")
-    .get(jsonRoute(200, () => app.listExpenses()))
+    .get(
+      jsonRoute(200, (req) => {
+        const query = {
+          fromDate: req.query.fromDate,
+          toDate: req.query.toDate,
+        };
+        if (Object.hasOwnProperty.call(req.query, "accountIDs")) {
+          query.accountIDs = csvToSet(req.query.accountIDs);
+        }
+        if (Object.hasOwnProperty.call(req.query, "categoryIDs")) {
+          query.categoryIDs = csvToSet(req.query.categoryIDs);
+        }
+        return app.listExpenses(query);
+      })
+    )
     .post(jsonRoute(201, (req) => app.createExpense(req.body)));
 
   server
@@ -82,7 +124,18 @@ export default async function createRestServer({ persistence = {} } = {}) {
 
   server
     .route("/transfers")
-    .get(jsonRoute(200, () => app.listTransfers()))
+    .get(
+      jsonRoute(200, (req) => {
+        const query = {
+          fromDate: req.query.fromDate,
+          toDate: req.query.toDate,
+        };
+        if (Object.hasOwnProperty.call(req.query, "accountIDs")) {
+          query.accountIDs = csvToSet(req.query.accountIDs);
+        }
+        return app.listTransfers(query);
+      })
+    )
     .post(jsonRoute(201, (req) => app.createTransfer(req.body)));
 
   server
