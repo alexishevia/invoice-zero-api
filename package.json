@@ -6,13 +6,8 @@
     "start": "nodemon --require dotenv/config ./bin/www.mjs",
     "debug": "nodemon --inspect-brk --require dotenv/config ./bin/www.mjs",
     "test": "mocha tests/**/*.test.mjs",
-    "test:debug": "mocha debug tests/**/*.test.mjs"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "npm run test"
-    }
+    "test:debug": "mocha debug tests/**/*.test.mjs",
+    "prepare": "husky install"
   },
   "lint-staged": {
     "*.{js,mjs,jsx,json}": [
