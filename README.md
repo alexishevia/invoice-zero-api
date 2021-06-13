@@ -30,6 +30,21 @@ PERSISTENCE_TYPE="file"
 PERSISTENCE_FILEPATH="/tmp/invoice-zero-api.mdjson"
 ```
 
+## Docker Image
+To make deployment easier, a `Dockerfile` is included.
+
+Build image: `docker build . -t alexishevia/invoice-zero-api`
+Run container: 
+```
+docker run -d \
+  -v /tmp/invoice-zero-api.mdjson:/invoice-zero-api.mdjson \
+  -p 8080:8080 \
+  --name izapi \
+  alexishevia/invoice-zero-api
+```
+Stop/remove container: `docker stop izapi && docker rm izapi`
+Generate git and docker tags: ``
+
 ## Models
 
 ### Accounts
