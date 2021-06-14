@@ -7,6 +7,7 @@ import Category from "./Category.mjs";
 import Income from "./Income.mjs";
 import Expense from "./Expense.mjs";
 import Transfer from "./Transfer.mjs";
+import Stats from "./Stats.mjs";
 
 function getPersistenceFromOptions({ type, filepath } = {}) {
   switch (type) {
@@ -102,7 +103,6 @@ export default function App(options = {}) {
       throw new NotFoundError(`no account with id: ${id}`);
     },
     listAccounts: () => Object.values(state.accounts),
-    getAccountBalance: (id) => Account.selectors.accountBalance(state, id),
 
     // categories
     createCategory: (data) => {
@@ -227,5 +227,8 @@ export default function App(options = {}) {
       }
       throw new NotFoundError(`no transfer with id: ${id}`);
     },
+
+    // stats
+    getStats: () => Stats.selectors.get(state),
   };
 }

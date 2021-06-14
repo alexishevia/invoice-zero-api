@@ -58,10 +58,6 @@ export default async function createRestServer({ persistence = {} } = {}) {
     .delete(noContentRoute((req) => app.deleteAccount(req.params.id)));
 
   server
-    .route("/accountBalance/:id")
-    .get(jsonRoute(200, (req) => app.getAccountBalance(req.params.id)));
-
-  server
     .route("/categories")
     .get(jsonRoute(200, () => app.listCategories()))
     .post(jsonRoute(201, (req) => app.createCategory(req.body)));
@@ -143,6 +139,8 @@ export default async function createRestServer({ persistence = {} } = {}) {
     .get(jsonRoute(200, (req) => app.getTransferByID(req.params.id)))
     .patch(jsonRoute(200, (req) => app.updateTransfer(req.params.id, req.body)))
     .delete(jsonRoute(200, (req) => app.deleteTransfer(req.params.id)));
+
+  server.route("/stats").get(jsonRoute(200, () => app.getStats()));
 
   // 404 handler
   server.use((_req, res) => {
