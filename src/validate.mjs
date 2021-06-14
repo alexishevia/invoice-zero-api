@@ -1,16 +1,17 @@
-import { isValidDayStr } from './date.mjs';
+import { isValidDayStr } from "./date.mjs";
 
 function failed(msg) {
   throw new Error(msg);
 }
 
 function validateString(value) {
-  if (typeof value !== 'string') {
-    failed('must be a string');
+  if (typeof value !== "string") {
+    failed("must be a string");
   }
   return {
-    notEmpty: function() {
+    notEmpty: () => {
       if (!value.length) {
+        failed("cannot be empty");
       }
       return this;
     },
@@ -18,17 +19,37 @@ function validateString(value) {
 }
 
 function validateNumber(value) {
-  if (typeof value !== 'number' || Number.isNaN(value)) {
-    failed('must be a number');
+  if (typeof value !== "number" || Number.isNaN(value)) {
+    failed("must be a number");
   }
   return {
-    biggerThan: function(num) {
+    biggerThan: (num) => {
       if (value <= num) {
         failed(`must be bigger than ${num}`);
       }
       return this;
     },
-    biggerOrEqualThan: function(num) {
+    biggerOrEqualThan: (num) => {
+      if (value < num) {
+        failed(`must be bigger or equal than ${num}`);
+      }
+      return this;
+    },
+  };
+}
+
+function validateInteger(value) {
+  if (!Number.isInteger(value)) {
+    failed("must be an integer");
+  }
+  return {
+    biggerThan: (num) => {
+      if (value <= num) {
+        failed(`must be bigger than ${num}`);
+      }
+      return this;
+    },
+    biggerOrEqualThan: (num) => {
       if (value < num) {
         failed(`must be bigger or equal than ${num}`);
       }
@@ -53,6 +74,7 @@ export default function validate(value) {
   return {
     string: () => validateString(value),
     number: () => validateNumber(value),
+    integer: () => validateInteger(value),
     bool: () => validateBoolean(value),
     dayString: () => validateDayString(value),
   };

@@ -8,7 +8,7 @@ const parse = {
     return val;
   },
   initialBalance: (val) => {
-    validate(val).number().biggerOrEqualThan(0);
+    validate(val).integer().biggerOrEqualThan(0);
     return val;
   },
 };

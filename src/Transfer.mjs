@@ -4,7 +4,7 @@ import { InvalidRequestError, NotFoundError } from "./errors.mjs";
 
 const parse = {
   amount: (_, val) => {
-    validate(val).number().biggerThan(0);
+    validate(val).integer().biggerThan(0);
     return val;
   },
   fromID: (state, val) => {
