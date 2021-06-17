@@ -10,12 +10,14 @@ function Result(initialBalance) {
   return {
     processIncome: ({ amount, transactionDate }) => {
       balance += amount; // increment balance
+
       // increment incomeByMonth
       const month = transactionMonth(transactionDate);
       incomeByMonth[month] = (incomeByMonth[month] || 0) + amount;
     },
     processExpense: ({ amount, transactionDate }) => {
-      balance += amount; // decrease balance
+      balance -= amount; // decrease balance
+
       // increment expensesByMonth
       const month = transactionMonth(transactionDate);
       expensesByMonth[month] = (expensesByMonth[month] || 0) + amount;
@@ -29,8 +31,22 @@ function Result(initialBalance) {
     toJSON: () => ({
       initialBalance,
       currentBalance: balance,
-      income: { byMonth: incomeByMonth },
-      expenses: { byMonth: expensesByMonth },
+      income: {
+        byMonth: Object.keys(incomeByMonth)
+          .sort()
+          .reduce((memo, key) => {
+            memo[key] = incomeByMonth[key];
+            return memo;
+          }, {}),
+      },
+      expenses: {
+        byMonth: Object.keys(expensesByMonth)
+          .sort()
+          .reduce((memo, key) => {
+            memo[key] = expensesByMonth[key];
+            return memo;
+          }, {}),
+      },
     }),
   };
 }
