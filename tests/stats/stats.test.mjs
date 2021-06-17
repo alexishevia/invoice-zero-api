@@ -51,7 +51,6 @@ describe("stats", () => {
     });
 
     stats = await app.getStats();
-    console.log(JSON.stringify(stats, null, 2));
 
     // global stats
     let { initialBalance, currentBalance, income, expenses } =
