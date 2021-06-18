@@ -47,6 +47,7 @@ export default async function createRestServer({
   await app.start();
   const server = express();
 
+  // cors
   server.use(cors());
 
   // basic auth

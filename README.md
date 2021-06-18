@@ -191,7 +191,6 @@ docker run -d \
   alexishevia/invoice-zero-api
 ```
 Stop/remove container: `docker stop izapi && docker rm izapi`
-Generate git and docker tags: `git tag`
 
 ## Deployment
 This API is meant to be selfhosted. Here is a sample `docker-compose.yml`:
