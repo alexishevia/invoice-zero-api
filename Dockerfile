@@ -16,6 +16,9 @@ COPY . .
 ENV PORT=8080
 ENV PERSISTENCE_TYPE="file"
 ENV PERSISTENCE_FILEPATH="/invoice-zero-api.mdjson"
+ENV AUTH_TYPE="basic"
+ENV AUTH_USERNAME=""
+ENV AUTH_PASSWORD=""
 
 # App will run on port 8080
 EXPOSE $PORT

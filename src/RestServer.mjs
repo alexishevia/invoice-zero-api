@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import basicAuth from "basic-auth";
 import App from "./App.mjs";
 import {
   NotFoundError,
@@ -38,13 +39,41 @@ function csvToSet(str) {
   );
 }
 
-export default async function createRestServer({ persistence = {} } = {}) {
+export default async function createRestServer({
+  persistence = {},
+  authentication = {},
+} = {}) {
   const app = new App({ persistence });
   await app.start();
   const server = express();
 
-  server.use(express.json()); // parse application/json
   server.use(cors());
+
+  // basic auth
+  if (authentication.type === "basic") {
+    const { username, password } = authentication;
+    if (!username || !password) {
+      console.error("username and password are required for basic auth");
+      process.exit(1);
+    }
+    server.use((req, res, next) => {
+      const result = basicAuth(req);
+      if (result && result.name === username && result.pass === password) {
+        next();
+        return;
+      }
+      res.setHeader(
+        "WWW-Authenticate",
+        'Basic realm="invoice-zero", charset="UTF-8"'
+      );
+      res.status(401).json({
+        error: { name: "Unauthorized", message: "Unauthorized" },
+      });
+    });
+  }
+
+  // parse application/json
+  server.use(express.json());
 
   server
     .route("/accounts")

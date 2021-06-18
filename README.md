@@ -18,16 +18,22 @@ Invoice Zero is a personal finance system meant to be simple, and easy to use.
 ## Getting Started
 1. Install [nodeJS](https://nodejs.org/) (v14.17.0 preferred)
 2. Run `npm install` to install all dependencies
-3. Run `npm start` to start the server on `http://localhost:8080`
+3. Create a `.env` file in the directory root with the following info:
+    ```
+    PORT=8080
+    AUTH_TYPE="basic"
+    AUTH_USERNAME="your_username"
+    AUTH_PASSWORD="your_password"
+    ```
+4. Run `npm start` to start the server on `http://localhost:8080`
 
 ## Persistence
 By default, data is only kept in memory. All data will be lost once the server is shut down.
 
 To enable file-based persistence:
 1. Create a new file to hold data, eg: `touch /tmp/invoice-zero-api.mdjson`
-2. Create a `.env` file in the project root with the following fields:
+2. Add the following fields to your `.env` file:
 ```
-PORT=8080
 PERSISTENCE_TYPE="file"
 PERSISTENCE_FILEPATH="/tmp/invoice-zero-api.mdjson"
 ```
@@ -188,13 +194,35 @@ Stop/remove container: `docker stop izapi && docker rm izapi`
 Generate git and docker tags: `git tag`
 
 ## Deployment
-When you're ready to deploy a new version:
+This API is meant to be selfhosted. Here is a sample `docker-compose.yml`:
+```yaml
+version: "3.3"
+
+services:
+  izapi:
+    image: alexishevia/invoice-zero-api:latest
+    restart: unless-stopped
+    environment:
+      - PORT=8080
+      - PERSISTENCE_TYPE="file"
+      - PERSISTENCE_FILEPATH="/actions.mdjson"
+      - AUTH_TYPE="basic"
+      - AUTH_USERNAME=${YOUR_USERNAME_ENV_VARIABLE}
+      - AUTH_PASSWORD=${YOUR_PASSWORD_ENV_VARIABLE}
+    volumes:
+      # all processed actions will be stored in this file
+      - /izapi_actions.mdjson:/actions.mdjson
+    ports:
+      - 80:8080
+```
+
+If you are the owner of this repo, and you're ready to deploy a new version:
 1. Update the `version` in `package.json`
 2. Run `./bin/deploy`
 
 The `./bin/deploy` script:
 - reads the `version` from `package.json`
-- creates a new git tag and pushes to origin
+- creates a new git tag and pushes it to origin
 - builds the docker image with latest code
 - tags the docker image and pushes to dockerhub
 
