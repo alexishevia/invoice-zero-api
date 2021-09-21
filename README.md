@@ -57,10 +57,6 @@ Accounts have the following fields:
 | initialBalance | int           | Amount of money (cents) in the | 30000                      |
 |                |               | account before tracking        |                            |
 |                |               | transactions in IZ.            |                            |
-|                |               |                                |                            |
-| modifiedAt     | string        | Last date the account was      | "2019-10-12T12:25:35.059Z" |
-|                | full ISO 8601 | modified.                      |                            |
-|                | date in UTC   |                                |                            |
 ```
 
 ### Categories
@@ -76,10 +72,6 @@ Categories have the following fields:
 |            |               |                                       |                            |
 | name       | string        | Human-friendly name for the category. | "Groceries"                |
 |            | non empty     |                                       |                            |
-|            |               |                                       |                            |
-| modifiedAt | string        | Last date the category was            | "2019-10-12T12:25:35.059Z" |
-|            | full ISO 8601 | modified.                             |                            |
-|            | date in UTC   |                                       |                            |
 ```
 
 ### Income
@@ -107,10 +99,6 @@ Income objects have the following fields:
 |                 |               |                                 |                            |
 | transactionDate | string        | Date the income happened.       | "2019-10-12"               |
 |                 | YYYY-MM-DD    |                                 |                            |
-|                 |               |                                 |                            |
-| modifiedAt      | string        | Last date the income was        | "2019-10-12T12:25:35.059Z" |
-|                 | full ISO 8601 | modified.                       |                            |
-|                 | date in UTC   |                                 |                            |
 ```
 
 ### Expenses
@@ -138,10 +126,6 @@ Expenses have the following fields:
 |                 |               |                                   |                            |
 | transactionDate | string        | Date the expense happened.        | "2019-10-12"               |
 |                 | YYYY-MM-DD    |                                   |                            |
-|                 |               |                                   |                            |
-| modifiedAt      | string        | Last date the expense was         | "2019-10-12T12:25:35.059Z" |
-|                 | full ISO 8601 | modified.                         |                            |
-|                 | date in UTC   |                                   |                            |
 ```
 
 ### Transfers
@@ -166,10 +150,6 @@ Transfers have the following fields:
 |                 |               |                                   |                            |
 | transactionDate | string        | Date the transfer happened.       | "2019-10-12"               |
 |                 | YYYY-MM-DD    |                                   |                            |
-|                 |               |                                   |                            |
-| modifiedAt      | string        | Last date the transfer was        | "2019-10-12T12:25:35.059Z" |
-|                 | full ISO 8601 | modified.                         |                            |
-|                 | date in UTC   |                                   |                            |
 ```
 
 ## Running Tests
