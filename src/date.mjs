@@ -45,7 +45,8 @@ export function monthEnd(date) {
 }
 
 export function getMonthStrFromDate(date) {
-  return date.toISOString().slice(0, 7);
+  const month = date.getMonth() + 1; // getMonth() is zero-based
+  return `${date.getFullYear()}-${String(month).padStart(2, 0)}`;
 }
 
 export function substractMonths(date, nMonths) {
