@@ -196,7 +196,7 @@ services:
 ```
 
 If you are the owner of this repo, and you're ready to deploy a new version:
-1. Update the `version` in `package.json`
+1. Update the `version` in `package.json` and commit change
 2. Run `./bin/deploy`
 
 The `./bin/deploy` script:
