@@ -1,5 +1,5 @@
-import fs from 'fs';
-import split2 from 'split2';
+import fs from "fs";
+import split2 from "split2";
 
 /*
  * FilePersistence
@@ -8,24 +8,24 @@ import split2 from 'split2';
 
 export default function FilePersistence({ filepath }) {
   return {
-    append: (event) => {
-      return fs.appendFileSync(filepath, '\n'+JSON.stringify(event));
-    },
-    forEach: async (func) => new Promise((resolve, reject) => {
-      try {
-        fs.createReadStream(filepath)
-          .pipe(split2())
-          .on('data', (line) => {
-            if (line === "") {
-              return;
-            }
-            func(JSON.parse(line));
-          })
-          .on('end', resolve)
-          .on('error', reject)
-      } catch(err) {
-        reject(err);
-      }
-    }),
-  }
+    append: (event) =>
+      fs.appendFileSync(filepath, `\n${JSON.stringify(event)}`),
+    forEach: async (func) =>
+      new Promise((resolve, reject) => {
+        try {
+          fs.createReadStream(filepath)
+            .pipe(split2())
+            .on("data", (line) => {
+              if (line === "") {
+                return;
+              }
+              func(JSON.parse(line));
+            })
+            .on("end", resolve)
+            .on("error", reject);
+        } catch (err) {
+          reject(err);
+        }
+      }),
+  };
 }

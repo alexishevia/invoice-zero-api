@@ -113,7 +113,7 @@ Expenses have the following fields:
 |                 | non empty     | expense.                          |                            |
 |                 |               |                                   |                            |
 | amount          | int           | The amount of money (cents) being | 1350                       |
-|                 | bigger than 0 | withdrawed.                       |                            |
+|                 | bigger than 0 | withdrawn.                        |                            |
 |                 |               |                                   |                            |
 | accountID       | string        | ID of the account where the money | "1dc149bc"                 |
 |                 | account ID    | is being withdrawn from.          |                            |
@@ -190,7 +190,7 @@ services:
       - AUTH_PASSWORD=${YOUR_PASSWORD_ENV_VARIABLE}
     volumes:
       # all processed actions will be stored in this file
-      - /izapi_actions.mdjson:/actions.mdjson
+      - /path/to/your/local/file.mdjson:/invoice-zero-api.mdjson
     ports:
       - 80:8080
 ```
