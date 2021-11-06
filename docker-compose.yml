@@ -1,0 +1,18 @@
+version: "3.3"
+
+services:
+  nodeapi:
+    image: node:14-alpine
+    restart: unless-stopped
+    working_dir: /usr/src/app
+    env_file: .env
+    environment:
+      - PERSISTENCE_FILEPATH=/usr/src/data/persistence.mdjson
+    volumes:
+      - ./nodeapi:/usr/src/app
+      - ./nodeapi/.tmp:/usr/src/data
+    ports:
+      - ${PORT}:${PORT}
+      - ${INSPECTOR_PORT}:9229
+      - ${TEST_INSPECTOR_PORT}:${TEST_INSPECTOR_PORT}
+    command: sh -c "npm install && npm run start"

@@ -10,7 +10,7 @@ COPY package*.json ./
 RUN npm ci --only=production
 
 # Bundle app source
-COPY . .
+COPY ./nodeapi .
 
 # Env variables
 ENV PORT=8080

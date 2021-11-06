@@ -2,41 +2,107 @@
 Invoice Zero is a personal finance system meant to be simple, and easy to use.
 
 1. [Getting Started](#getting-started)
-2. [Persistence](#persistence)
-3. [Models](#models)
+2. [The .tmp directory](#the-tmp-directory)
+3. [Auto-reload](#auto-reload)
+4. [NPM dependencies: package.json and node_modules](#npm-dependencies-packagejson-and-node_modules)
+5. [Pushing your changes / Git Hooks](#pushing-your-changes--git-hooks)
+6. [Running Tests](#running-tests)
+7. [Debugging](#debugging)
+8. [Architecture](#architecture)
+9. [Models](#models)
 	1. [Accounts](#accounts)
 	2. [Categories](#categories)
 	3. [Income](#income)
 	4. [Expenses](#expenses)
 	5. [Transfers](#transfers)
-4. [Running Tests](#running-tests)
-5. [Docker Image](#docker-image)
-6. [Deployment](#deployment)
-7. [Architecture](#architecture)
-8. [References](#references)
+10. [Deployment](#deployment)
 
 ## Getting Started
-1. Install [nodeJS](https://nodejs.org/) (v14.17.0 preferred)
-2. Run `npm install` to install all dependencies
-3. Create a `.env` file in the directory root with the following info:
+1. Install [Docker](https://www.docker.com/get-started)
+2. Create a `.env` file in the directory root with the following info:
     ```
     PORT=8080
-    AUTH_TYPE="basic"
-    AUTH_USERNAME="your_username"
-    AUTH_PASSWORD="your_password"
+    INSPECTOR_PORT=9229
+    TEST_INSPECTOR_PORT=9230
+    AUTH_TYPE=basic
+    AUTH_USERNAME=your_username
+    AUTH_PASSWORD=your_password
+    PERSISTENCE_TYPE=file
     ```
-4. Run `npm start` to start the server on `http://localhost:8080`
+3. Run `docker-compose up` to start the nodeJS service and its dependencies using docker. Once the
+   service initializes, it should be available on `http://localhost:8080`
 
-## Persistence
-By default, data is only kept in memory. All data will be lost once the server is shut down.
+## The .tmp directory
+After running `docker-compose up`, you'll notice a `nodeapi/.tmp` directory is created. This
+directory holds files that are generated when running the app (ie: data files).
 
-To enable file-based persistence:
-1. Create a new file to hold data, eg: `touch /tmp/invoice-zero-api.mdjson`
-2. Add the following fields to your `.env` file:
-```
-PERSISTENCE_TYPE="file"
-PERSISTENCE_FILEPATH="/tmp/invoice-zero-api.mdjson"
-```
+For the most part, you should not need to edit files in this directory manually.
+
+If you decide to nuke this directory, it will delete all data for your app, and you would start from
+a "blank slate" again when you restart the app.
+
+## Auto-reload
+`docker-compose` is configured to auto-reload on code changes using [nodemon](https://nodemon.io/).
+
+However, you will have to manually restart `docker-compose` if you edit your `.env` file.
+
+## NPM dependencies: package.json and node_modules
+You'll notice this repo has two `package.json` files:
+1. `./package.json`
+2. `./nodeapi/package.json`
+
+The top-level `package.json` defines modules that run in your local (aka host) machine, for
+development purposes. eg: `eslint, prettier, husky`
+
+The `./nodeapi/package.json` defines modules that run in the docker container, for the app to run.
+eg: `express`
+
+When installing new modules:
+- if it is a module that will run in the host machine, install it using `npm install` in your computer.
+- if it is a module that will run in the docker container:
+    * run npm install in the nodeapi container, eg: `docker-compose exec nodeapi npm install express`
+
+## Pushing your changes / Git Hooks
+This repo is configured with some git hooks that should help with code quality:
+- on `git commit`: [prettier](https://prettier.io/) runs on all files being added.
+- on `git push`: all tests are executed, and pushing is blocked if any test fails.
+    see [Running Tests](#running-tests) if you're having issues.
+
+Note: The hooks are installed by [husky](https://www.npmjs.com/package/husky) when you run `npm install`.
+
+## Running Tests
+Note: make sure the container is running before running tests (ie: `docker-compose up`)
+
+- Run all tests: `docker-compose exec nodeapi npm run test`
+- Run all tests in debug mode: `docker-compose exec nodeapi npm run test:debug`
+    The nodeJS inspector will be running on `127.0.0.1:9230` 
+    (or whichever port you set for `TEST_INSPECTOR_PORT` in `.env`)
+    See [Inspector Clients](https://nodejs.org/en/docs/guides/debugging-getting-started/#inspector-clients) for info on how to connect to the inspector.
+- Run a single test: `docker-compose exec nodeapi npm run test:single path/to/test.mjs`
+    eg: `docker-compose exec nodeapi npm run test:single tests/accounts/createAccount.test.mjs`
+- Run a single test in debug mode: `docker-compose exec nodeapi npm run test:single:debug path/to/test.mjs`
+    eg: `docker-compose exec nodeapi npm run test:single:debug tests/accounts/createAccount.test.mjs`
+
+## Debugging
+By default, the app runs with the [node inspector](https://nodejs.org/en/docs/guides/debugging-getting-started/) running on 127.0.0.1:9229.
+(or whichever port you set for `INSPECTOR_PORT` in `.env`)
+
+See [Inspector Clients](https://nodejs.org/en/docs/guides/debugging-getting-started/#inspector-clients) for info on how to connect to the inspector.
+
+## Architecture
+The API architecture is heavily inspired by [Redux](https://redux.js.org/).
+
+- Instead of using a database, all state is kept in memory.
+- To update state, an "action" must be dispatched.
+- For persistence, actions are added to an append-only log. On restart, state is re-built (hydrated)
+  by processing the append-only log.
+
+References:
+- [Redux docs](https://redux.js.org/)
+- [Doing Without Databases in the 21st Century](https://codeburst.io/doing-without-databases-in-the-21st-century-6e25cf495373)
+- [Using logs to build a solid data infrastructure](http://martin.kleppmann.com/2015/05/27/logs-for-data-infrastructure.html)
+
+
 
 ## Models
 
@@ -152,26 +218,6 @@ Transfers have the following fields:
 |                 | YYYY-MM-DD    |                                   |                            |
 ```
 
-## Running Tests
-- Run all tests: `npm test`
-- Run tests in debug mode: `npm run test:debug`
-- Run a single test: `npx mocha /path/to/test.mjs`
-- Run a single test in debug mode: `npx mocha debug /path/to/test.mjs`
-
-## Docker Image
-To make deployment easier, a `Dockerfile` is included.
-
-Build image: `docker build . -t alexishevia/invoice-zero-api`
-Run container: 
-```
-docker run -d \
-  -v /tmp/invoice-zero-api.mdjson:/invoice-zero-api.mdjson \
-  -p 8080:8080 \
-  --name izapi \
-  alexishevia/invoice-zero-api
-```
-Stop/remove container: `docker stop izapi && docker rm izapi`
-
 ## Deployment
 This API is meant to be selfhosted. Here is a sample `docker-compose.yml`:
 ```yaml
@@ -191,30 +237,29 @@ services:
     volumes:
       # all processed actions will be stored in this file
       - /path/to/your/local/file.mdjson:/invoice-zero-api.mdjson
-    ports:
-      - 80:8080
 ```
 
 If you are the owner of this repo, and you're ready to deploy a new version:
-1. Update the `version` in `package.json` and commit change
-2. Run `./bin/deploy`
+1. Test the `Dockerfile`
+
+Build image: `docker build . -t alexishevia/invoice-zero-api`
+Run container: 
+```
+docker run \
+  -v /tmp/invoice-zero-api.mdjson:/invoice-zero-api.mdjson \
+  -e AUTH_USERNAME="foo" \
+  -e AUTH_PASSWORD="bar" \
+  -p 8080:8080 \
+  --name izapi \
+  alexishevia/invoice-zero-api
+```
+Stop/remove container: `docker stop izapi && docker rm izapi`
+
+2. Update the `version` in `package.json` and commit change
+3. Run `./bin/deploy`
 
 The `./bin/deploy` script:
-- reads the `version` from `package.json`
+- reads the `version` from `nodeapi/package.json`
 - creates a new git tag and pushes it to origin
-- builds the docker image with latest code
+- builds the docker image from `Dockerfile` with latest code
 - tags the docker image and pushes to dockerhub
-
-
-## Architecture
-The API architecture is heavily inspired by [Redux](https://redux.js.org/).
-
-- Instead of using a database, all state is kept in memory.
-- To update state, an "action" must be dispatched.
-- For persistence, actions are added to an append-only log. On restart, state is re-built (hydrated)
-  by processing the append-only log.
-
-## References
-- [Redux docs](https://redux.js.org/)
-- [Doing Without Databases in the 21st Century](https://codeburst.io/doing-without-databases-in-the-21st-century-6e25cf495373)
-- [Using logs to build a solid data infrastructure](http://martin.kleppmann.com/2015/05/27/logs-for-data-infrastructure.html)
