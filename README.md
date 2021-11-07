@@ -20,20 +20,28 @@ Invoice Zero is a personal finance system meant to be simple, and easy to use.
 ## Getting Started
 1. Install [Docker](https://www.docker.com/get-started)
 2. Create a `.env` file in the directory root with the following info:
-    ```
-    PORT=8080
-    INSPECTOR_PORT=9229
-    TEST_INSPECTOR_PORT=9230
-    AUTH_TYPE=basic
-    AUTH_USERNAME=your_username
-    AUTH_PASSWORD=your_password
-    PERSISTENCE_TYPE=file
-    ```
+```
+PORT=8080
+INSPECTOR_PORT=9229
+TEST_INSPECTOR_PORT=9230
+AUTH_TYPE=basic
+AUTH_USERNAME=auth_username
+AUTH_PASSWORD=auth_password
+DB_ROOT_PASSWORD=postgres_root_password
+DB_NAME=izapi
+DB_USER=izapi
+DB_PASSWORD=izapi_pwd
+```
+
 3. Run `docker-compose up` to start the nodeJS service and its dependencies using docker. Once the
    service initializes, it should be available on `http://localhost:8080`
+4. Run database migrations with: `./bin/migrations_up`
+
+Optional:
+Install [nodeJS](https://nodejs.org/en/) and run `npm install` to install some development tools, like eslint and prettier.
 
 ## The .tmp directory
-After running `docker-compose up`, you'll notice a `nodeapi/.tmp` directory is created. This
+After running `docker-compose up`, you'll notice a `.tmp` directory is created. This
 directory holds files that are generated when running the app (ie: data files).
 
 For the most part, you should not need to edit files in this directory manually.
@@ -44,7 +52,25 @@ a "blank slate" again when you restart the app.
 ## Auto-reload
 `docker-compose` is configured to auto-reload on code changes using [nodemon](https://nodemon.io/).
 
-However, you will have to manually restart `docker-compose` if you edit your `.env` file.
+However, you will have to manually restart `docker-compose` if you edit your `.env` file, or after
+running database migrations.
+
+## Running Tests
+- Run all tests: `./bin/test`
+- Run all tests in debug mode: `./bin/test_debug`
+    The nodeJS inspector will be running on `127.0.0.1:9230` 
+    (or whichever port you set for `TEST_INSPECTOR_PORT` in `.env`)
+    See [Inspector Clients](https://nodejs.org/en/docs/guides/debugging-getting-started/#inspector-clients) for info on how to connect to the inspector.
+- Run a single test: `./bin/test path/to/test.mjs`
+    eg: `./bin/test tests/accounts/createAccount.test.mjs`
+- Run a single test in debug mode: `./bin/test_debug path/to/test.mjs`
+    eg: `./bin/test_debug tests/accounts/createAccount.test.mjs`
+
+## Debugging
+By default, the app runs with the [node inspector](https://nodejs.org/en/docs/guides/debugging-getting-started/) running on 127.0.0.1:9229.
+(or whichever port you set for `INSPECTOR_PORT` in `.env`)
+
+See [Inspector Clients](https://nodejs.org/en/docs/guides/debugging-getting-started/#inspector-clients) for info on how to connect to the inspector.
 
 ## NPM dependencies: package.json and node_modules
 You'll notice this repo has two `package.json` files:
@@ -58,9 +84,19 @@ The `./nodeapi/package.json` defines modules that run in the docker container, f
 eg: `express`
 
 When installing new modules:
-- if it is a module that will run in the host machine, install it using `npm install` in your computer.
+- if it is a module that will run in the host machine:
+    run `npm install` in your computer
 - if it is a module that will run in the docker container:
-    * run npm install in the nodeapi container, eg: `docker-compose exec nodeapi npm install express`
+    run `npm install` in the nodeapi container, eg: `docker-compose run nodeapi npm install express`
+
+## Database Migrations
+This app uses [db-migrate](https://db-migrate.readthedocs.io/en/latest/) for migrations.
+
+- To create a new migration: `./bin/migrations_new your_migration_name`
+    eg: `./bin/migrations_new add_accounts_table`
+    You'll see two new files ("up" and "down") added in `./db/migrations/sqls/`. Add your SQL queries there.
+- To run migrations: `./bin/migrations_up`
+- To rollback migrations: `./bin/migrations_down`
 
 ## Pushing your changes / Git Hooks
 This repo is configured with some git hooks that should help with code quality:
@@ -68,26 +104,7 @@ This repo is configured with some git hooks that should help with code quality:
 - on `git push`: all tests are executed, and pushing is blocked if any test fails.
     see [Running Tests](#running-tests) if you're having issues.
 
-Note: The hooks are installed by [husky](https://www.npmjs.com/package/husky) when you run `npm install`.
-
-## Running Tests
-Note: make sure the container is running before running tests (ie: `docker-compose up`)
-
-- Run all tests: `docker-compose exec nodeapi npm run test`
-- Run all tests in debug mode: `docker-compose exec nodeapi npm run test:debug`
-    The nodeJS inspector will be running on `127.0.0.1:9230` 
-    (or whichever port you set for `TEST_INSPECTOR_PORT` in `.env`)
-    See [Inspector Clients](https://nodejs.org/en/docs/guides/debugging-getting-started/#inspector-clients) for info on how to connect to the inspector.
-- Run a single test: `docker-compose exec nodeapi npm run test:single path/to/test.mjs`
-    eg: `docker-compose exec nodeapi npm run test:single tests/accounts/createAccount.test.mjs`
-- Run a single test in debug mode: `docker-compose exec nodeapi npm run test:single:debug path/to/test.mjs`
-    eg: `docker-compose exec nodeapi npm run test:single:debug tests/accounts/createAccount.test.mjs`
-
-## Debugging
-By default, the app runs with the [node inspector](https://nodejs.org/en/docs/guides/debugging-getting-started/) running on 127.0.0.1:9229.
-(or whichever port you set for `INSPECTOR_PORT` in `.env`)
-
-See [Inspector Clients](https://nodejs.org/en/docs/guides/debugging-getting-started/#inspector-clients) for info on how to connect to the inspector.
+Note: The hooks are installed by [husky](https://www.npmjs.com/package/husky) when you run `npm install` on your local machine.
 
 ## Architecture
 The API architecture is heavily inspired by [Redux](https://redux.js.org/).
@@ -101,7 +118,6 @@ References:
 - [Redux docs](https://redux.js.org/)
 - [Doing Without Databases in the 21st Century](https://codeburst.io/doing-without-databases-in-the-21st-century-6e25cf495373)
 - [Using logs to build a solid data infrastructure](http://martin.kleppmann.com/2015/05/27/logs-for-data-infrastructure.html)
-
 
 
 ## Models

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -e # exit if any command fails
+
+CURRENT_FILE=`realpath $0`
+CURRENT_DIR=`dirname $CURRENT_FILE`
+
+source $CURRENT_DIR/../.env
+
+if [ -n "$1" ]; then
+  path=$1
+else
+  path="tests/**/*.test.mjs"
+fi
+
+docker-compose run -p $TEST_INSPECTOR_PORT:$TEST_INSPECTOR_PORT nodeapi npx mocha --inspect-brk=0.0.0.0:$TEST_INSPECTOR_PORT $path

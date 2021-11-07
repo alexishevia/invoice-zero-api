@@ -3,18 +3,14 @@
   "version": "0.0.5",
   "private": true,
   "scripts": {
-    "prestart": "touch /usr/src/data/persistence.mdjson",
-    "start": "nodemon --inspect=0.0.0.0 ./bin/www.mjs",
-    "test": "mocha tests/**/*.test.mjs",
-    "test:debug": "mocha --inspect-brk=0.0.0.0:$TEST_INSPECTOR_PORT tests/**/*.test.mjs",
-    "test:single": "mocha",
-    "test:single:debug": "mocha --inspect-brk=0.0.0.0:$TEST_INSPECTOR_PORT"
+    "start": "nodemon --inspect=0.0.0.0 ./bin/www.mjs"
   },
   "dependencies": {
     "basic-auth": "^2.0.1",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "massive": "^6.10.2",
     "split2": "^3.2.2",
     "uuid": "^8.3.2"
   },
