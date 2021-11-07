@@ -6,4 +6,4 @@ else
   path="tests/**/*.test.mjs"
 fi
 
-docker-compose run nodeapi npx mocha $path
+docker-compose run api npx mocha $path

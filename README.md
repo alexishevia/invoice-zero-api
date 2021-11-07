@@ -75,19 +75,19 @@ See [Inspector Clients](https://nodejs.org/en/docs/guides/debugging-getting-star
 ## NPM dependencies: package.json and node_modules
 You'll notice this repo has two `package.json` files:
 1. `./package.json`
-2. `./nodeapi/package.json`
+2. `./api/package.json`
 
 The top-level `package.json` defines modules that run in your local (aka host) machine, for
 development purposes. eg: `eslint, prettier, husky`
 
-The `./nodeapi/package.json` defines modules that run in the docker container, for the app to run.
+The `./api/package.json` defines modules that run in the docker container, for the app to run.
 eg: `express`
 
 When installing new modules:
 - if it is a module that will run in the host machine:
     run `npm install` in your computer
 - if it is a module that will run in the docker container:
-    run `npm install` in the nodeapi container, eg: `docker-compose run nodeapi npm install express`
+    run `npm install` in the api container, eg: `docker-compose run api npm install express`
 
 ## Database Migrations
 This app uses [db-migrate](https://db-migrate.readthedocs.io/en/latest/) for migrations.
@@ -275,7 +275,7 @@ Stop/remove container: `docker stop izapi && docker rm izapi`
 3. Run `./bin/deploy`
 
 The `./bin/deploy` script:
-- reads the `version` from `nodeapi/package.json`
+- reads the `version` from `api/package.json`
 - creates a new git tag and pushes it to origin
 - builds the docker image from `Dockerfile` with latest code
 - tags the docker image and pushes to dockerhub

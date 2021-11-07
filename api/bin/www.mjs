@@ -1,20 +1,16 @@
 #!/usr/bin/env node
 
+import massive from 'massive';
 import createServer from "../src/RestServer.mjs";
 
 const {
   PORT,
-  PERSISTENCE_TYPE,
-  PERSISTENCE_FILEPATH,
   AUTH_USERNAME,
   AUTH_PASSWORD,
+  DATABASE_URL,
 } = process.env;
 
 const port = PORT || 8080;
-const persistence = {
-  type: PERSISTENCE_TYPE || "memory",
-  filepath: PERSISTENCE_FILEPATH || "",
-};
 const authentication = {
   type: "basic",
   username: AUTH_USERNAME,
@@ -22,10 +18,14 @@ const authentication = {
 };
 
 async function main() {
-  const server = await createServer({ persistence, authentication });
+  const db = await massive(DATABASE_URL);
+  const server = await createServer({ db, authentication });
   server.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);
   });
 }
 
-main();
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

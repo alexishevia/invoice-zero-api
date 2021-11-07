@@ -11,8 +11,8 @@ CURRENT_DIR=`dirname $CURRENT_FILE`
 # run migrations to prepare db
 $CURRENT_DIR/migrations_up
 
-# start node API conainer
-docker-compose up nodeapi
+# start API container
+docker-compose up api
 
 # cleanup once you're done
 $CURRENT_DIR/stop

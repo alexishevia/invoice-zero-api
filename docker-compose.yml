@@ -13,20 +13,7 @@ services:
       - ./.tmp/postgres:/var/lib/postgresql/data
       - ./db/init:/docker-entrypoint-initdb.d
 
-  dbmigrate:
-    image: dbmigrate/db-migrate:v0.1-all
-    depends_on:
-      - postgres
-    environment:
-      - DB_NAME=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_HOST=postgres
-    volumes:
-      - ./db/migrations/database.json:/home/node/database.json
-      - ./db/migrations:/home/node/migrations
-
-  nodeapi:
+  api:
     image: node:14-alpine
     depends_on:
       - postgres
@@ -40,8 +27,22 @@ services:
       - AUTH_PASSWORD=${AUTH_PASSWORD}
       - DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@postgres/$DB_NAME
     volumes:
-      - ./nodeapi:/usr/src/app
+      - ./api:/usr/src/app
     ports:
       - ${PORT}:${PORT}
       - ${INSPECTOR_PORT}:9229
     command: sh -c "npm install && npm run start"
+
+  dbmigrate:
+    image: dbmigrate/db-migrate:v0.1-all
+    depends_on:
+      - postgres
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=postgres
+    volumes:
+      - ./db/migrations/database.json:/home/node/database.json
+      - ./db/migrations:/home/node/migrations
+

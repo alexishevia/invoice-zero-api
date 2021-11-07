@@ -6,7 +6,7 @@ CURRENT_FILE=`realpath $0`
 CURRENT_DIR=`dirname $CURRENT_FILE`
 
 # read version from package.json
-version="v$(cat $CURRENT_DIR/../nodeapi/package.json | jq -r .version)"
+version="v$(cat $CURRENT_DIR/../api/package.json | jq -r .version)"
 
 # create git tag and push to origin
 git tag $version
