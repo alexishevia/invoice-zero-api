@@ -1,7 +1,7 @@
 version: "3.3"
 
 services:
-  postgres:
+  api_db:
     image: postgres:14.0-alpine
     restart: unless-stopped
     environment:
@@ -10,13 +10,24 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
     volumes:
-      - ./.tmp/postgres:/var/lib/postgresql/data
+      - ./.tmp/api_db:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
+
+  e2e_db:
+    image: postgres:14.0-alpine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=${DB_ROOT_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+    volumes:
       - ./db/init:/docker-entrypoint-initdb.d
 
   api:
     image: node:14-alpine
     depends_on:
-      - postgres
+      - api_db
     restart: unless-stopped
     working_dir: /usr/src/app
     environment:
@@ -25,7 +36,7 @@ services:
       - AUTH_TYPE=${AUTH_TYPE}
       - AUTH_USERNAME=${AUTH_USERNAME}
       - AUTH_PASSWORD=${AUTH_PASSWORD}
-      - DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@postgres/$DB_NAME
+      - DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@api_db/$DB_NAME
     volumes:
       - ./api:/usr/src/app
     ports:
@@ -33,15 +44,42 @@ services:
       - ${INSPECTOR_PORT}:9229
     command: sh -c "npm install && npm run start"
 
+  e2e_api:
+    image: node:14-alpine
+    depends_on:
+      - e2e_db
+    working_dir: /usr/src/app
+    environment:
+      - PORT=${PORT}
+      - INSPECTOR_PORT=${INSPECTOR_PORT}
+      - AUTH_TYPE=${AUTH_TYPE}
+      - AUTH_USERNAME=${AUTH_USERNAME}
+      - AUTH_PASSWORD=${AUTH_PASSWORD}
+      - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@e2e_db/test
+    volumes:
+      - ./api:/usr/src/app
+    command: sh -c "npm install && npm run start"
+
+  e2e_runner:
+    image: node:14-alpine
+    depends_on:
+      - e2e_api
+    working_dir: /usr/src/app
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DATABASE_URL=postgres://postgres:${DB_ROOT_PASSWORD}@e2e_db/postgres
+    volumes:
+      - ./e2e:/usr/src/app
+
   dbmigrate:
     image: dbmigrate/db-migrate:v0.1-all
     depends_on:
-      - postgres
+      - api_db
+      - e2e_db
     environment:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
-      - DB_HOST=postgres
     volumes:
       - ./db/migrations/database.json:/home/node/database.json
       - ./db/migrations:/home/node/migrations
