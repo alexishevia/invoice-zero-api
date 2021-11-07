@@ -1,4 +1,5 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-docker-compose exec -T nodeapi npm test
+./bin/test_unit
+./bin/test_e2e

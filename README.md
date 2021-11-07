@@ -33,9 +33,8 @@ DB_USER=izapi
 DB_PASSWORD=izapi_pwd
 ```
 
-3. Run `./bin/start` to start the nodeJS service and its dependencies using docker. Once the
-   service initializes, it should be available on `http://localhost:8080`
-    (or whichever port you set for `PORT` in `.env`)
+3. Run `./bin/start` to start the api using docker. Once the api initializes, it should be available
+   on `http://localhost:8080` (or whichever port you set for `PORT` in `.env`)
 
 Optional:
 Install [nodeJS](https://nodejs.org/en/) and run `npm install` to install some development tools, like eslint and prettier.
@@ -55,16 +54,22 @@ The service is configured to auto-reload on code changes, using [nodemon](https:
 However, you will have to manually restart the service if you edit your `.env` file, or after
 running database migrations.
 
-## Running Tests
-- Run all tests: `./bin/test`
-- Run all tests in debug mode: `./bin/test_debug`
+## Running Unit Tests
+- Run all unit tests: `./bin/test_unit`
+- Run all unit tests in debug mode: `./bin/test_unit_debug`
     The nodeJS inspector will be running on `127.0.0.1:9230` 
     (or whichever port you set for `TEST_INSPECTOR_PORT` in `.env`)
     See [Inspector Clients](https://nodejs.org/en/docs/guides/debugging-getting-started/#inspector-clients) for info on how to connect to the inspector.
-- Run a single test: `./bin/test path/to/test.mjs`
-    eg: `./bin/test tests/accounts/createAccount.test.mjs`
-- Run a single test in debug mode: `./bin/test_debug path/to/test.mjs`
-    eg: `./bin/test_debug tests/accounts/createAccount.test.mjs`
+- Run a single unit test: `./bin/test_unit path/to/test.mjs`
+    eg: `./bin/test_unit tests/accounts/createAccount.test.mjs`
+- Run a single test in debug mode: `./bin/test_unit_debug path/to/test.mjs`
+    eg: `./bin/test_unit_debug tests/accounts/createAccount.test.mjs`
+
+## Running E2E Tests
+E2E tests run in a separate "e2e_runner" container, which spins an "e2e_api" container (a clone of
+api).
+
+Run e2e tests: `./bin/test_e2e`
 
 ## Debugging
 By default, the app runs with the [node inspector](https://nodejs.org/en/docs/guides/debugging-getting-started/) running on 127.0.0.1:9229.
@@ -73,9 +78,10 @@ By default, the app runs with the [node inspector](https://nodejs.org/en/docs/gu
 See [Inspector Clients](https://nodejs.org/en/docs/guides/debugging-getting-started/#inspector-clients) for info on how to connect to the inspector.
 
 ## NPM dependencies: package.json and node_modules
-You'll notice this repo has two `package.json` files:
+You'll notice this repo has three `package.json` files:
 1. `./package.json`
 2. `./api/package.json`
+3. `./e2e/package.json`
 
 The top-level `package.json` defines modules that run in your local (aka host) machine, for
 development purposes. eg: `eslint, prettier, husky`
@@ -83,11 +89,13 @@ development purposes. eg: `eslint, prettier, husky`
 The `./api/package.json` defines modules that run in the docker container, for the app to run.
 eg: `express`
 
+The `./e2e/package.json` defines modules that run in the e2e container, for test purposes.
+
 When installing new modules:
 - if it is a module that will run in the host machine:
     run `npm install` in your computer
 - if it is a module that will run in the docker container:
-    run `npm install` in the api container, eg: `docker-compose run api npm install express`
+    run `npm install` in the container, eg: `docker-compose run api npm install express`
 
 ## Database Migrations
 This app uses [db-migrate](https://db-migrate.readthedocs.io/en/latest/) for migrations.
