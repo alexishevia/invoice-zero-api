@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -e # exit if any command fails
+
+CURRENT_FILE=`realpath $0`
+CURRENT_DIR=`dirname $CURRENT_FILE`
+
+# read env file
+. $CURRENT_DIR/../.env
+
+# run migrations to prepare db
+$CURRENT_DIR/migrations_up
+
+# start node API conainer
+docker-compose up nodeapi
+
+# cleanup once you're done
+$CURRENT_DIR/stop

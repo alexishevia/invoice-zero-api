@@ -33,9 +33,9 @@ DB_USER=izapi
 DB_PASSWORD=izapi_pwd
 ```
 
-3. Run `docker-compose up` to start the nodeJS service and its dependencies using docker. Once the
+3. Run `./bin/start` to start the nodeJS service and its dependencies using docker. Once the
    service initializes, it should be available on `http://localhost:8080`
-4. Run database migrations with: `./bin/migrations_up`
+    (or whichever port you set for `PORT` in `.env`)
 
 Optional:
 Install [nodeJS](https://nodejs.org/en/) and run `npm install` to install some development tools, like eslint and prettier.
@@ -50,9 +50,9 @@ If you decide to nuke this directory, it will delete all data for your app, and 
 a "blank slate" again when you restart the app.
 
 ## Auto-reload
-`docker-compose` is configured to auto-reload on code changes using [nodemon](https://nodemon.io/).
+The service is configured to auto-reload on code changes, using [nodemon](https://nodemon.io/).
 
-However, you will have to manually restart `docker-compose` if you edit your `.env` file, or after
+However, you will have to manually restart the service if you edit your `.env` file, or after
 running database migrations.
 
 ## Running Tests

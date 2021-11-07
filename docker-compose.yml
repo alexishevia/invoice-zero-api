@@ -41,7 +41,6 @@ services:
       - DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@postgres/$DB_NAME
     volumes:
       - ./nodeapi:/usr/src/app
-      - ./.tmp/nodeapi:/usr/src/data
     ports:
       - ${PORT}:${PORT}
       - ${INSPECTOR_PORT}:9229
