@@ -8,8 +8,12 @@ CURRENT_DIR=`dirname $CURRENT_FILE`
 # read env file
 . $CURRENT_DIR/../.env
 
-# run migrations
-docker-compose run dbmigrate up -e e2e
+# run migrations on e2e_db
+docker-compose run -T -e DB_HOST=e2e_db api npx db-migrate up
+
+# create an empty "test" database, using the $DB_NAME database as a template
+docker-compose exec -T e2e_db psql -U postgres -c 'DROP DATABASE IF EXISTS test;'
+docker-compose exec -T e2e_db psql -U postgres -c "CREATE DATABASE test TEMPLATE ${DB_NAME};"
 
 # run e2e tests
-docker-compose run e2e_runner npx mocha --exit "tests/**/*.test.mjs"
+docker-compose run -T e2e_runner npx mocha --exit "tests/**/*.test.mjs"

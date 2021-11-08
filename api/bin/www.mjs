@@ -1,14 +1,19 @@
 #!/usr/bin/env node
 
-import massive from 'massive';
+import massive from "massive";
 import createServer from "../src/RestServer.mjs";
 
 const {
   PORT,
   AUTH_USERNAME,
   AUTH_PASSWORD,
-  DATABASE_URL,
+  DB_HOST,
+  DB_NAME,
+  DB_USER,
+  DB_PASSWORD,
 } = process.env;
+
+const DATABASE_URL = `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}`;
 
 const port = PORT || 8080;
 const authentication = {

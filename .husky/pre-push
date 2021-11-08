@@ -1,5 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-./bin/test_unit
-./bin/test_e2e
+./bin/test_unit && ./bin/test_e2e

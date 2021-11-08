@@ -36,7 +36,10 @@ services:
       - AUTH_TYPE=${AUTH_TYPE}
       - AUTH_USERNAME=${AUTH_USERNAME}
       - AUTH_PASSWORD=${AUTH_PASSWORD}
-      - DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@api_db/$DB_NAME
+      - DB_HOST=api_db
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
     volumes:
       - ./api:/usr/src/app
     ports:
@@ -55,7 +58,10 @@ services:
       - AUTH_TYPE=${AUTH_TYPE}
       - AUTH_USERNAME=${AUTH_USERNAME}
       - AUTH_PASSWORD=${AUTH_PASSWORD}
-      - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@e2e_db/test
+      - DB_HOST=e2e_db
+      - DB_NAME=test
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
     volumes:
       - ./api:/usr/src/app
     command: sh -c "npm install && npm run start"
