@@ -184,7 +184,7 @@ services:
     environment:
       - PORT=8080
       - PERSISTENCE_TYPE="file"
-      - PERSISTENCE_FILEPATH="/actions.mdjson"
+      - PERSISTENCE_FILEPATH="/invoice-zero-api.mdjson"
       - AUTH_TYPE="basic"
       - AUTH_USERNAME=${YOUR_USERNAME_ENV_VARIABLE}
       - AUTH_PASSWORD=${YOUR_PASSWORD_ENV_VARIABLE}
